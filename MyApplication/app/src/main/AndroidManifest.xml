@@ -23,7 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<<<<<<< HEAD
         <activity android:name=".SplashActivity"></activity>
+=======
+        <activity
+            android:name=".MainMenuActivity"
+            android:label="@string/title_activity_main_menu"></activity>
+>>>>>>> a4461137847de6053bc4558f10685bb8cf42a109
     </application>
 
 </manifest>
