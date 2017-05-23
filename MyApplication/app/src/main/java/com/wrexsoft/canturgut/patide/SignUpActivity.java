@@ -37,8 +37,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -46,38 +49,40 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    SharedPreferences settings;
-    SharedPreferences.Editor editor;
-
-    boolean registered;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    FirebaseUser user;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    FirebaseUser user;
+    SharedPreferences settings;
+    DatabaseReference dref;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private EditText mNameView;
+    private EditText mLastNameView;
     private View mProgressView;
     private View mLoginFormView;
+    private boolean registered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_sign_up);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
+
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -90,15 +95,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+
+        mNameView = (EditText) findViewById(R.id.name);
+        mLastNameView = (EditText) findViewById(R.id.lastname);
+
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        Button mSignUpButton = (Button) findViewById(R.id.go_to_signup_button);
-        mSignUpButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
-                startActivity(intent);
-            }
-        });
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,24 +107,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
+        settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        dref = FirebaseDatabase.getInstance().getReference();
+
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
-            public static final String TAG = "Firebase Auth";
+            public static final String TAG = "Firebase Auth State" ;
 
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    signInSuccesfull();
-                    Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
-                    startActivity(intent);
-                    finish();
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
                     // User is signed out
@@ -132,9 +131,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // ...
             }
         };
-
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -192,10 +203,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+        mNameView.setError(null);
+        mLastNameView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String name = mNameView.getText().toString();
+        String lastname = mLastNameView.getText().toString();
+
 
         boolean cancel = false;
         View focusView = null;
@@ -216,6 +232,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
+        } else if (TextUtils.isEmpty(name)) {
+            mNameView.setError(getString(R.string.error_field_required));
+            focusView = mNameView;
+            cancel = true;
+        } else if (TextUtils.isEmpty(lastname)) {
+            mLastNameView.setError(getString(R.string.error_field_required));
+            focusView = mLastNameView;
+            cancel = true;
         }
 
         if (cancel) {
@@ -226,9 +250,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(email, password, name, lastname);
             mAuthTask.execute((Void) null);
         }
+
     }
 
     private boolean isEmailValid(String email) {
@@ -311,24 +336,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
+                new ArrayAdapter<>(SignUpActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
@@ -353,36 +364,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         private final String mEmail;
         private final String mPassword;
+        private final String mName;
+        private final String mLastName;
+        HashMap<String, Object> userDetails;
 
-        UserLoginTask(String email, String password) {
+        UserLoginTask(String email, String password, String name, String lastname) {
             mEmail = email;
             mPassword = password;
+            mName = name;
+            mLastName = lastname;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
+
             try {
                 // Simulate network access.
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 return false;
             }
-
             registered = false;
-            mAuth.signInWithEmailAndPassword(mEmail, mPassword)
-                    .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                        public static final String TAG = "Sign_in trial";
 
+
+            mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
+                    .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+                            String TAG = "Firebase Auth trial";
+                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
                             // If sign in fails, display a message to the user. If sign in succeeds
                             // the auth state listener will be notified and logic to handle the
                             // signed in user can be handled in the listener.
                             if (!task.isSuccessful()) {
-                                Log.w(TAG, "signInWithEmail:failed", task.getException());
-                                Toast.makeText(LoginActivity.this, R.string.auth_failed,
+                                Toast.makeText(SignUpActivity.this, R.string.auth_failed,
                                         Toast.LENGTH_SHORT).show();
                                 registered = false;
                             } else {
@@ -391,23 +407,53 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             }
 
                             if (registered) {
-                                signInSuccesfull();
+                                localSignIn();
+                                writeUserToDB();
+                                Toast.makeText(SignUpActivity.this, R.string.auth_success, Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                                 startActivity(intent);
                                 finish();
-
                             } else {
-                                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                                mPasswordView.requestFocus();
+                                mEmailView.setError(getString(R.string.error_invalid_email));
+                                mEmailView.requestFocus();
                             }
+
                             // ...
                             showProgress(false);
-
-                            // ...
                         }
                     });
-
             return true;
+        }
+
+
+        private void localSignIn() {
+            SharedPreferences.Editor editor = settings.edit();
+            String userID = user.getUid();
+            editor.putString("FbUserId", userID);
+            editor.apply();
+        }
+
+        private void writeUserToDB() {
+            String TAG = "DB";
+
+            String userId = "" + user.getUid();
+
+            userDetails = new HashMap<>();
+            userDetails.put("name", mName);
+            userDetails.put("lastname", mLastName);
+            userDetails.put("email", mEmail);
+
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("name", mName);
+            editor.putString("lastname", mLastName);
+            editor.putString("email", mEmail);
+            editor.apply();
+
+            dref.child("Users").child(userId).setValue(userDetails);
+
+
+            //Log.d(TAG, "onAuthStateChanged:signed_in:" + userId);
+
         }
 
         @Override
@@ -422,13 +468,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
         }
-    }
-
-    private void signInSuccesfull() {
-        editor = settings.edit();
-        String userID = user.getUid();
-        editor.putString("FbUserId", userID);
-        editor.apply();
     }
 }
 
