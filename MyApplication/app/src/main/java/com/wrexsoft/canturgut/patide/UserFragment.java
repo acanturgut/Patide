@@ -5,14 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 /**
@@ -21,11 +26,24 @@ import com.google.firebase.auth.FirebaseUser;
 public class UserFragment extends Fragment {
 
     View view;
+
+    TextView mUserName;
+    Button mEdit;
+    EditText mEmail;
+    EditText mPassword;
+    EditText mLeisure;
+    EditText mWork;
+    EditText mStudy;
     Button mSignout;
+
+    Boolean editable;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     FirebaseUser user;
+    String fbuserId;
+
+    DatabaseReference dref;
 
     public UserFragment() {
         // Required empty public constructor
@@ -38,8 +56,71 @@ public class UserFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user, container, false);
 
-        mSignout = (Button) view.findViewById(R.id.signout_button);
+        mUserName = (TextView) view.findViewById(R.id.username);
 
+        mEmail = (EditText) view.findViewById(R.id.etEmail);
+        mEmail.setTag(mEmail.getKeyListener());
+        mEmail.setKeyListener(null);
+
+        mPassword = (EditText) view.findViewById(R.id.etPassword);
+        mPassword.setTag(mPassword.getKeyListener());
+        mPassword.setKeyListener(null);
+
+        mLeisure = (EditText) view.findViewById(R.id.etLeisure);
+        mLeisure.setTag(mLeisure.getKeyListener());
+        mLeisure.setKeyListener(null);
+
+        mWork = (EditText) view.findViewById(R.id.etWork);
+        mWork.setTag(mWork.getKeyListener());
+        mWork.setKeyListener(null);
+
+        mStudy = (EditText) view.findViewById(R.id.etStudy);
+        mStudy.setTag(mStudy.getKeyListener());
+        mStudy.setKeyListener(null);
+
+        dref = FirebaseDatabase.getInstance().getReference();
+
+        editable = false;
+        mEdit = (Button) view.findViewById(R.id.edit_button);
+        mEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (!editable) {
+                    editable = true;
+
+                    mEmail.setKeyListener((KeyListener) mEmail.getTag());
+                    mPassword.setKeyListener((KeyListener) mPassword.getTag());
+                    mLeisure.setKeyListener((KeyListener) mLeisure.getTag());
+                    mWork.setKeyListener((KeyListener) mWork.getTag());
+                    mStudy.setKeyListener((KeyListener) mStudy.getTag());
+                    mEdit.setText("Done");
+
+                } else {
+                    editable = false;
+
+                    mEmail.setKeyListener(null);
+                    mPassword.setKeyListener(null);
+                    mLeisure.setKeyListener(null);
+                    mWork.setKeyListener(null);
+                    mStudy.setKeyListener(null);
+                    mEdit.setText("Edit");
+
+                    String leisure = mLeisure.getText().toString();
+                    String work = mWork.getText().toString();
+                    String study = mStudy.getText().toString();
+
+                    dref.child("Users").child(fbuserId).child("Daily").child("leisure").setValue(leisure);
+                    dref.child("Users").child(fbuserId).child("Daily").child("work").setValue(work);
+                    dref.child("Users").child(fbuserId).child("Daily").child("study").setValue(study);
+
+                }
+
+
+            }
+        });
+
+        mSignout = (Button) view.findViewById(R.id.signout_button);
         mSignout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,6 +128,8 @@ public class UserFragment extends Fragment {
 
             }
         });
+
+
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             public static final String TAG = "Firebase Auth";
@@ -56,8 +139,8 @@ public class UserFragment extends Fragment {
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    fbuserId = user.getUid();
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + fbuserId);
                 } else {
                     Intent intent = new Intent(getContext(), LoginActivity.class);
                     startActivity(intent);

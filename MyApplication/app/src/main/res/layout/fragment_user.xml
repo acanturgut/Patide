@@ -6,7 +6,6 @@
     android:orientation="vertical"
     tools:context="com.wrexsoft.canturgut.patide.UserFragment">
 
-    <!-- TODO: Update blank fragment layout -->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignBottom="@+id/edit_button"
-            android:layout_marginRight="100dp">
+            android:layout_marginEnd="100dp">
 
             <TextView
                 android:id="@+id/username"
@@ -27,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/userscreen_placehodler_name"
-                android:textSize="20dp"
+                android:textSize="20sp"
 
                 />
 
@@ -42,8 +41,9 @@
             android:background="@drawable/button_patide_color"
             android:padding="10dp"
             android:text="@string/userscreen_button_edit"
+            android:textAllCaps="false"
             android:textColor="@color/patide_white"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
@@ -56,7 +56,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -71,6 +71,8 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/etEmail"
+                    android:inputType="textEmailAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/userscreen_email" />
@@ -82,9 +84,11 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/etPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/userscreen_password" />
+                    android:hint="@string/userscreen_password"
+                    android:inputType="textPassword"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -100,6 +104,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/etLeisure"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/userscreen_leisure_time" />
@@ -111,6 +116,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/etWork"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/userscreen_work_time" />
@@ -122,6 +128,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:id="@+id/etStudy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/userscreen_study_time" />
@@ -137,9 +144,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:background="@drawable/button_patide_color"
-        android:text="Sign Out"
+        android:text="@string/action_sign_out"
         android:textAllCaps="false"
         android:textColor="@color/patide_white"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 
 </LinearLayout>
