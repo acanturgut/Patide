@@ -3,22 +3,24 @@ package com.wrexsoft.canturgut.patide;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,8 +30,18 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
@@ -45,22 +57,23 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    FirebaseUser user;
+    SharedPreferences settings;
+    DatabaseReference dref;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
+    private EditText mNameView;
+    private EditText mLastNameView;
     private View mProgressView;
     private View mLoginFormView;
+    private boolean registered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +95,10 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             }
         });
 
+
+        mNameView = (EditText) findViewById(R.id.name);
+        mLastNameView = (EditText) findViewById(R.id.lastname);
+
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -92,8 +109,43 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        dref = FirebaseDatabase.getInstance().getReference();
+
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            public static final String TAG = "Firebase Auth State" ;
+
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                }
+                // ...
+            }
+        };
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -151,10 +203,15 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
+        mNameView.setError(null);
+        mLastNameView.setError(null);
 
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
+        String name = mNameView.getText().toString();
+        String lastname = mLastNameView.getText().toString();
+
 
         boolean cancel = false;
         View focusView = null;
@@ -175,6 +232,14 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
+        } else if (TextUtils.isEmpty(name)) {
+            mNameView.setError(getString(R.string.error_field_required));
+            focusView = mNameView;
+            cancel = true;
+        } else if (TextUtils.isEmpty(lastname)) {
+            mLastNameView.setError(getString(R.string.error_field_required));
+            focusView = mLastNameView;
+            cancel = true;
         }
 
         if (cancel) {
@@ -185,9 +250,10 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(email, password, name, lastname);
             mAuthTask.execute((Void) null);
         }
+
     }
 
     private boolean isEmailValid(String email) {
@@ -298,33 +364,96 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
 
         private final String mEmail;
         private final String mPassword;
+        private final String mName;
+        private final String mLastName;
+        HashMap<String, Object> userDetails;
 
-        UserLoginTask(String email, String password) {
+        UserLoginTask(String email, String password, String name, String lastname) {
             mEmail = email;
             mPassword = password;
+            mName = name;
+            mLastName = lastname;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
             try {
                 // Simulate network access.
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 return false;
             }
+            registered = false;
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
 
-            // TODO: register the new account here.
+            mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
+                    .addOnCompleteListener(SignUpActivity.this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            String TAG = "Firebase Auth trial";
+                            Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                            // If sign in fails, display a message to the user. If sign in succeeds
+                            // the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(SignUpActivity.this, R.string.auth_failed,
+                                        Toast.LENGTH_SHORT).show();
+                                registered = false;
+                            } else {
+                                registered = true;
+
+                            }
+
+                            if (registered) {
+                                localSignIn();
+                                writeUserToDB();
+                                Toast.makeText(SignUpActivity.this, R.string.auth_success, Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                mEmailView.setError(getString(R.string.error_invalid_email));
+                                mEmailView.requestFocus();
+                            }
+
+                            // ...
+                            showProgress(false);
+                        }
+                    });
             return true;
+        }
+
+
+        private void localSignIn() {
+            SharedPreferences.Editor editor = settings.edit();
+            String userID = user.getUid();
+            editor.putString("FbUserId", userID);
+            editor.apply();
+        }
+
+        private void writeUserToDB() {
+            String TAG = "DB";
+
+            String userId = "" + user.getUid();
+
+            userDetails = new HashMap<>();
+            userDetails.put("name", mName);
+            userDetails.put("lastname", mLastName);
+            userDetails.put("email", mEmail);
+
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString("name", mName);
+            editor.putString("lastname", mLastName);
+            editor.putString("email", mEmail);
+            editor.apply();
+
+            dref.child("Users").child(userId).setValue(userDetails);
+
+
+            //Log.d(TAG, "onAuthStateChanged:signed_in:" + userId);
+
         }
 
         @Override
@@ -332,12 +461,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
         }
 
         @Override
