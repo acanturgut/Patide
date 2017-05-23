@@ -4,13 +4,8 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
-<<<<<<< HEAD
-    <string name="action_sign_in">Sign in</string>
-    <string name="action_sign_in_short">Sign in</string>
-=======
     <string name="action_sign_in">Sign In</string>
     <string name="action_sign_up">Sign Up</string>
->>>>>>> 023381d9023b5db66453ce7e10af74f48f86daee
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -19,19 +14,14 @@
         completions."
     </string>
     <string name="auth_failed">Authentication Failed</string>
-    <string name="title_activity_main_menu">MainMenuActivity</string>
+    <string name="title_activity_main_menu">Patide</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-<<<<<<< HEAD
 
     <!-- Patide -->
 
-    
-
-
-=======
     <string name="title_activity_sign_up">Sign Up</string>
     <string name="auth_success">Authentication Granted!</string>
->>>>>>> 023381d9023b5db66453ce7e10af74f48f86daee
+
 </resources>
