@@ -43,7 +43,7 @@ public class NewEventFragment extends Fragment {
         mComments = (EditText) view.findViewById(R.id.mComments);
 
         ChooseDateButton = (Button) view.findViewById(R.id.chooseDateBtn);
-        tvChooseDate = (TextView) view.findViewById(R.id.mChooseDate);
+
         mPriority = (SeekBar) view.findViewById(R.id.choosePrioritySB);
 
         AddEventButton = (Button) view.findViewById(R.id.addEventButton);

@@ -45,6 +45,15 @@
     <string name="user_screen_user_info">User Information</string>
     <string name="user_screen_user_habits">User Habits</string>
 
+    <!-- New Event Screen -->
+
+    <string name="eventscreen_name">Name</string>
+    <string name="eventscreen_estimated_time">Estimated Time</string>
+    <string name="eventscreen_choose_time">Choose Time</string>
+    <string name="eventscreen_choose_priority">Choose Priority</string>
+    <string name="eventscreen_comment">Comment</string>
+    <string name="eventscreen_done">Done</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
