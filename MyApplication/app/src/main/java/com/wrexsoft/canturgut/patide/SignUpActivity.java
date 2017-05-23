@@ -449,7 +449,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             editor.putString("email", mEmail);
             editor.apply();
 
-            dref.child("Users").child(userId).setValue(userDetails);
+            dref.child("Users").child(userId).child("UserData").setValue(userDetails);
 
 
             //Log.d(TAG, "onAuthStateChanged:signed_in:" + userId);
