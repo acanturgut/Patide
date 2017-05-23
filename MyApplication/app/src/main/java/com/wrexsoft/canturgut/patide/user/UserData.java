@@ -4,17 +4,17 @@ package com.wrexsoft.canturgut.patide.user;
  * Created by CanTurgut on 23/05/2017.
  */
 
-class userData {
-    private static final userData userInstance = new userData();
+class UserData {
+    private static final UserData userInstance = new UserData();
 
     private String username;
     private String email;
     private String userUID;
 
-    static userData getInstance() {
+    static UserData getInstance() {
         return userInstance;
     }
-    private userData() {
+    private UserData() {
     }
 
     public String getUsername() {
