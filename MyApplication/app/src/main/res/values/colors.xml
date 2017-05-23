@@ -3,4 +3,15 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- COLOR PATITE -->
+
+    <color name="patide_color">#7e0c88</color>
+    <color name="patide_white">#ffffff</color>
+    <color name="patide_accept">#56c97c</color>
+    <color name="patide_dark">#353535</color>
+    <color name="patite_warning">#f63434</color>
+    <color name="patide_grey">#888888</color>
+
+
 </resources>
