@@ -39,7 +39,7 @@
     <string name="userscreen_email">Set Up New E-Mail</string>
     <string name="userscreen_password">Set Up New Password</string>
     <string name="userscreen_leisure_time">Leisure Time</string>
-    <string name="userscreen_study_time">Study Time</string>
+    <string name="userscreen_sleep_time">Sleep Time</string>
     <string name="userscreen_work_time">Work Time</string>
 
     <!-- User Screen Headers -->
