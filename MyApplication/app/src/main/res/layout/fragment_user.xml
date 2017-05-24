@@ -147,7 +147,7 @@
                     android:id="@+id/etStudy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/userscreen_study_time"
+                    android:hint="@string/userscreen_sleep_time"
                     android:inputType="number" />
 
             </android.support.design.widget.TextInputLayout>

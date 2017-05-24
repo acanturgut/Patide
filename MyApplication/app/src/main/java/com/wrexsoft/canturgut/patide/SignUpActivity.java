@@ -411,7 +411,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
                                 localSignIn();
                                 writeUserToDB();
                                 Toast.makeText(SignUpActivity.this, R.string.auth_success, Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                                Intent intent = new Intent(getApplicationContext(), DailyActivity.class);
                                 startActivity(intent);
                                 finish();
                             } else {

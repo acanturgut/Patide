@@ -12,7 +12,10 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -42,7 +46,6 @@ public class AllEventsFragment extends Fragment {
     View view;
 
     private ListView listViewEvents;
-    protected ArrayList<String> listEvents = new ArrayList<>();
     protected ArrayList<String> listEventIds = new ArrayList<>();
 
     ArrayList<HashMap<String, String>> listOfEvents = new ArrayList<HashMap<String, String>>();
@@ -73,7 +76,22 @@ public class AllEventsFragment extends Fragment {
         fbuserId = settings.getString("FbUserId", "userId");
 
         listViewEvents = (ListView) view.findViewById(R.id.listViewAllEvents);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listEvents);
+        listViewEvents.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String eventId = listEventIds.get(position);
+                Bundle bundle = new Bundle();
+                bundle.putString("eventId" , eventId);
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("All Events");
+                //ab.setTitle("All Events");
+                EventDetailFragment eventDetailFragment = new EventDetailFragment();
+                eventDetailFragment.setArguments(bundle);
+                ft.replace(R.id.main_frame, eventDetailFragment);
+                ft.commit();
+            }
+        });
 
 
         dref = FirebaseDatabase.getInstance().getReference();
@@ -198,8 +216,7 @@ public class AllEventsFragment extends Fragment {
                 listEventIds.add(listCursor.getString(1));
                 holder = new HashMap<String, String>();
                 holder.put("Content", listCursor.getString(5));
-                holder.put("Time", "0:0");
-                holder.put("Date", "G/A/Y S:D");
+                holder.put("Time", listCursor.getString(3));
                 listOfEvents.add(holder);
                 adapterListEvents.notifyDataSetChanged();
             }

@@ -3,7 +3,7 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
+    <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign In</string>
     <string name="action_sign_up">Sign Up</string>
     <string name="action_sign_out">Sign Out</string>
@@ -32,13 +32,14 @@
     <!-- User Screen Changeable -->
 
     <string name="userscreen_button_edit">Edit</string>
+    <string name="userscreen_button_done">Done</string>
 
     <!-- User Screen Hints -->
 
     <string name="userscreen_email">Set Up New E-Mail</string>
     <string name="userscreen_password">Set Up New Password</string>
     <string name="userscreen_leisure_time">Leisure Time</string>
-    <string name="userscreen_study_time">Study Time</string>
+    <string name="userscreen_sleep_time">Sleep Time</string>
     <string name="userscreen_work_time">Work Time</string>
 
     <!-- User Screen Headers -->
