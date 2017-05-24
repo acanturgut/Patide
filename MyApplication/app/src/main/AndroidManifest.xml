@@ -23,13 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".SplashActivity"/>
-        <activity android:name=".SignUpActivity"/>
-
+        <activity android:name=".SplashActivity" />
+        <activity android:name=".SignUpActivity" />
         <activity
             android:name=".MainMenuActivity"
-            android:label="@string/title_activity_main_menu"/>
+            android:label="@string/title_activity_main_menu" />
+        <activity android:name=".DailyActivity"></activity>
     </application>
 
 </manifest>
