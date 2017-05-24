@@ -120,7 +120,7 @@ public class UserFragment extends Fragment {
                         }
                     }, 100);
 
-                    boolean passwordFieldCheck = mPassword.getText().equals("") || mPassword.getText() == null;
+                    boolean passwordFieldCheck = mPassword.getText().toString().equals("") || mPassword.getText() == null;
 
                     if (!passwordFieldCheck) {
 
