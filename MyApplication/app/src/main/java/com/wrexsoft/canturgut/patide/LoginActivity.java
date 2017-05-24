@@ -120,11 +120,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
+                    editor = settings.edit();
+                    String userID = user.getUid();
+                    editor.putString("FbUserId", userID);
+                    editor.apply();
+
                     signInSuccesfull();
                     Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                     startActivity(intent);
                     finish();
-                    Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + userID);
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");

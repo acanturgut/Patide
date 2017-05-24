@@ -1,14 +1,30 @@
 package com.wrexsoft.canturgut.patide;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Objects;
 
 public class MainMenuActivity extends AppCompatActivity {
+
+    DatabaseReference dref;
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -48,6 +64,67 @@ public class MainMenuActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        String userID = settings.getString("FbUserId", "userID");
+
+        dref = FirebaseDatabase.getInstance().getReference();
+        dref.child("Users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+
+
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String EMAIL =  dataSnapshot.child("UserData").child("email").getValue().toString();
+                Toast.makeText(getBaseContext(), EMAIL, Toast.LENGTH_SHORT).show();
+
+                for (DataSnapshot data : dataSnapshot.child("UserData").getChildren() ){
+                    editor = settings.edit();
+                    if (Objects.equals(data.getKey(), "name")) {
+                        String  mName = data.getValue().toString();
+                        editor.putString("name", mName);
+                        Log.d("mName", mName);
+                    }
+                    if (Objects.equals(data.getKey(), "lastname")) {
+                        String  mLastName = data.getValue().toString();
+                        editor.putString("lastname", mLastName);
+                        Log.d("mLastName", mLastName);
+                    }
+                    if (Objects.equals(data.getKey(), "email")) {
+                        String  mEmail = data.getValue().toString();
+                        editor.putString("email", mEmail);
+                        Log.d("mEmail", mEmail);
+                    }
+                    editor.apply();
+                }
+
+
+                for (DataSnapshot data : dataSnapshot.child("Daily").getChildren() ){
+                    editor = settings.edit();
+                    if (Objects.equals(data.getKey(), "leisure")) {
+                        String mLeisure = data.getValue().toString();
+                        editor.putString("leisure", mLeisure);
+                        Log.d("leisure", mLeisure);
+                    }
+                    if (Objects.equals(data.getKey(), "work")) {
+                        String mWork = data.getValue().toString();
+                        editor.putString("work", mWork);
+                        Log.d("work", mWork);
+                    }
+                    if (Objects.equals(data.getKey(), "study")) {
+                        String mStudy = data.getValue().toString();
+                        editor.putString("study", mStudy);
+                        Log.d("study", mStudy);
+                    }
+                    editor.apply();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

@@ -2,7 +2,9 @@ package com.wrexsoft.canturgut.patide;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.method.KeyListener;
@@ -43,6 +45,9 @@ public class UserFragment extends Fragment {
     FirebaseUser user;
     String fbuserId;
 
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
+
     DatabaseReference dref;
 
     public UserFragment() {
@@ -56,9 +61,12 @@ public class UserFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_user, container, false);
 
-        mUserName = (TextView) view.findViewById(R.id.username);
+        settings = PreferenceManager.getDefaultSharedPreferences(getContext());
 
+        mUserName = (TextView) view.findViewById(R.id.username);
+        mUserName.setText(settings.getString("name", "name") + " " + (settings.getString("lastname", "lastname")));
         mEmail = (EditText) view.findViewById(R.id.etEmail);
+        mEmail.setText("" + settings.getString("email", "email"));
         mEmail.setTag(mEmail.getKeyListener());
         mEmail.setKeyListener(null);
 
@@ -67,18 +75,24 @@ public class UserFragment extends Fragment {
         mPassword.setKeyListener(null);
 
         mLeisure = (EditText) view.findViewById(R.id.etLeisure);
+        mLeisure.setText("" + settings.getString("leisure", "leisure"));
         mLeisure.setTag(mLeisure.getKeyListener());
         mLeisure.setKeyListener(null);
 
         mWork = (EditText) view.findViewById(R.id.etWork);
+        mWork.setText("" + settings.getString("work", "work"));
         mWork.setTag(mWork.getKeyListener());
         mWork.setKeyListener(null);
 
         mStudy = (EditText) view.findViewById(R.id.etStudy);
+        mStudy.setText("" + settings.getString("study", "study"));
         mStudy.setTag(mStudy.getKeyListener());
         mStudy.setKeyListener(null);
 
         dref = FirebaseDatabase.getInstance().getReference();
+
+
+        //fbuserId = settings.getString("FbUserId", "userId");
 
         editable = false;
         mEdit = (Button) view.findViewById(R.id.edit_button);
@@ -114,6 +128,12 @@ public class UserFragment extends Fragment {
                     dref.child("Users").child(fbuserId).child("Daily").child("work").setValue(work);
                     dref.child("Users").child(fbuserId).child("Daily").child("study").setValue(study);
 
+                    editor = settings.edit();
+                    editor.putString("leisure", leisure);
+                    editor.putString("work", work);
+                    editor.putString("study", study);
+                    editor.apply();
+
                 }
 
 
@@ -125,6 +145,8 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mAuth.signOut();
+                editor = settings.edit();
+                editor.clear();
 
             }
         });
