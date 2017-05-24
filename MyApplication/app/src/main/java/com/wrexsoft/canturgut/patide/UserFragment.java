@@ -66,13 +66,16 @@ public class UserFragment extends Fragment {
         mUserName = (TextView) view.findViewById(R.id.username);
         mUserName.setText(settings.getString("name", "name") + " " + (settings.getString("lastname", "lastname")));
         mEmail = (EditText) view.findViewById(R.id.etEmail);
-        mEmail.setText("" + settings.getString("email", "email"));
+        //mEmail.setText("" + settings.getString("email", "email"));
         mEmail.setTag(mEmail.getKeyListener());
         mEmail.setKeyListener(null);
 
         mPassword = (EditText) view.findViewById(R.id.etPassword);
         mPassword.setTag(mPassword.getKeyListener());
         mPassword.setKeyListener(null);
+
+        mPassword.setVisibility(View.INVISIBLE);
+        mEmail.setVisibility(View.INVISIBLE);
 
         mLeisure = (EditText) view.findViewById(R.id.etLeisure);
         mLeisure.setText("" + settings.getString("leisure", "leisure"));
@@ -102,7 +105,8 @@ public class UserFragment extends Fragment {
 
                 if (!editable) {
                     editable = true;
-
+                    mPassword.setVisibility(View.VISIBLE);
+                    mEmail.setVisibility(View.VISIBLE);
                     mEmail.setKeyListener((KeyListener) mEmail.getTag());
                     mPassword.setKeyListener((KeyListener) mPassword.getTag());
                     mLeisure.setKeyListener((KeyListener) mLeisure.getTag());
@@ -112,7 +116,8 @@ public class UserFragment extends Fragment {
 
                 } else {
                     editable = false;
-
+                    mPassword.setVisibility(View.INVISIBLE);
+                    mEmail.setVisibility(View.INVISIBLE);
                     mEmail.setKeyListener(null);
                     mPassword.setKeyListener(null);
                     mLeisure.setKeyListener(null);
@@ -135,8 +140,6 @@ public class UserFragment extends Fragment {
                     editor.apply();
 
                 }
-
-
             }
         });
 
@@ -148,11 +151,8 @@ public class UserFragment extends Fragment {
                 editor = settings.edit();
                 editor.clear();
                 editor.apply();
-
-
             }
         });
-
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {

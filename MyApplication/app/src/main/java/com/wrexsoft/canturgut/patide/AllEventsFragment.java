@@ -1,6 +1,5 @@
 package com.wrexsoft.canturgut.patide;
 
-
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.ArrayList;
-
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,19 +38,25 @@ public class AllEventsFragment extends Fragment {
 
     View view;
 
-    private ListView listViewFriends;
+    private ListView listViewEvents;
     protected ArrayList<String> listEvents = new ArrayList<>();
     protected ArrayList<String> listEventIds = new ArrayList<>();
+
+    ArrayList<HashMap<String,String>> listOfEvents = new ArrayList<HashMap<String,String>>();
+    SimpleAdapter adapterListEvents;
+
     AVLoadingIndicatorView avi;
     ArrayAdapter<String> adapter;
     String fbuserId;
     DatabaseReference dref;
     SharedPreferences settings;
 
+    HashMap<String,String> holder;
+
+
     public AllEventsFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -63,9 +69,9 @@ public class AllEventsFragment extends Fragment {
         settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         fbuserId = settings.getString("FbUserId", "userId");
 
-        listViewFriends = (ListView) view.findViewById(R.id.listViewAllEvents);
+        listViewEvents = (ListView) view.findViewById(R.id.listViewAllEvents);
         adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listEvents);
-        listViewFriends.setAdapter(adapter);
+
 
         dref = FirebaseDatabase.getInstance().getReference();
         EventsLoader friendsLoader = new EventsLoader(this);
@@ -77,6 +83,21 @@ public class AllEventsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        adapterListEvents = new SimpleAdapter(getActivity(),
+                listOfEvents,
+                R.layout.list_view,
+                new String[]{"Content", "Time"},
+                new int[]{R.id.content,R.id.time});
+
+
+
+        listViewEvents.setAdapter(adapterListEvents);
     }
 
     @Override
@@ -112,7 +133,7 @@ public class AllEventsFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             startAnim();
-            allEventsFragment.listViewFriends.setVisibility(View.GONE);
+            allEventsFragment.listViewEvents.setVisibility(View.GONE);
         }
 
         @Override
@@ -123,28 +144,34 @@ public class AllEventsFragment extends Fragment {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         listEventIds.add(dataSnapshot.getKey());
-                        listEvents.add(dataSnapshot.child("eventname").getValue().toString());
-                        adapter.notifyDataSetChanged();
+
+                        holder = new HashMap<String, String>();
+                        holder.put("Content", dataSnapshot.child("eventname").getValue().toString());
+                        holder.put("Time", "0:0");
+                        listOfEvents.add(holder);
+
+
+                        adapterListEvents.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        adapter.notifyDataSetChanged();
+                        adapterListEvents.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        adapter.notifyDataSetChanged();
+                        adapterListEvents.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                        adapter.notifyDataSetChanged();
+                        adapterListEvents.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        adapter.notifyDataSetChanged();
+                        adapterListEvents.notifyDataSetChanged();
                     }
                 });
             } catch (Exception e) {
@@ -168,7 +195,7 @@ public class AllEventsFragment extends Fragment {
             @Override
             public void run() {
                 stopAnim();
-                listViewFriends.setVisibility(View.VISIBLE);
+                listViewEvents.setVisibility(View.VISIBLE);
             }
         }, 1000);
     }

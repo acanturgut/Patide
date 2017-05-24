@@ -102,7 +102,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+
+                if(isPasswordValid(mPasswordView.getText().toString())) {
+
+                    attemptLogin();
+
+                }else{
+
+                    mPasswordView.setError("Password is not valid");
+                }
             }
         });
 
@@ -110,6 +118,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -124,7 +133,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     String userID = user.getUid();
                     editor.putString("FbUserId", userID);
                     editor.apply();
-
                     signInSuccesfull();
                     Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                     startActivity(intent);
@@ -238,12 +246,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return email.contains("@") || email.contains(".");
     }
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 6;
     }
 
     /**
