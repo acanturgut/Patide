@@ -106,7 +106,16 @@ public class NewEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                ChooseDateButton.setText(dPicker.getDayOfMonth() + "/" + dPicker.getMonth() + 1 + "/" + dPicker.getYear());
+                String day = "";
+                if (dPicker.getDayOfMonth() < 10) {
+                    day = "0";
+                }
+                String month = "";
+                if (dPicker.getMonth() < 10) {
+                    month = "0";
+                }
+                int  monthInt = dPicker.getMonth() + 1;
+                ChooseDateButton.setText(day + dPicker.getDayOfMonth() + "/" + month + Integer.toString(monthInt)+ "/" + dPicker.getYear());
                 showTimePicker();
                 datepicker.dismiss();
 
@@ -134,7 +143,16 @@ public class NewEventFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 String date = "" + ChooseDateButton.getText();
-                ChooseDateButton.setText(date + " " + tPicker.getHour() + ":" + tPicker.getMinute());
+
+                String hr = "";
+                if (tPicker.getHour() < 10) {
+                    hr = "0";
+                }
+                String min = "";
+                if (tPicker.getMinute() < 10) {
+                    min = "0";
+                }
+                ChooseDateButton.setText(date + " " + hr + tPicker.getHour() + ":" + min + tPicker.getMinute());
                 timepicker.dismiss();
 
             }

@@ -42,7 +42,6 @@ public class AllEventsFragment extends Fragment {
     View view;
 
     private ListView listViewEvents;
-    protected ArrayList<String> listEvents = new ArrayList<>();
     protected ArrayList<String> listEventIds = new ArrayList<>();
 
     ArrayList<HashMap<String, String>> listOfEvents = new ArrayList<HashMap<String, String>>();
@@ -73,7 +72,6 @@ public class AllEventsFragment extends Fragment {
         fbuserId = settings.getString("FbUserId", "userId");
 
         listViewEvents = (ListView) view.findViewById(R.id.listViewAllEvents);
-        adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listEvents);
 
 
         dref = FirebaseDatabase.getInstance().getReference();
@@ -198,8 +196,7 @@ public class AllEventsFragment extends Fragment {
                 listEventIds.add(listCursor.getString(1));
                 holder = new HashMap<String, String>();
                 holder.put("Content", listCursor.getString(5));
-                holder.put("Time", "0:0");
-                holder.put("Date", "G/A/Y S:D");
+                holder.put("Time", listCursor.getString(3));
                 listOfEvents.add(holder);
                 adapterListEvents.notifyDataSetChanged();
             }
