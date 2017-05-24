@@ -3,6 +3,9 @@ package com.wrexsoft.canturgut.patide;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,7 +45,7 @@ public class AllEventsFragment extends Fragment {
     protected ArrayList<String> listEvents = new ArrayList<>();
     protected ArrayList<String> listEventIds = new ArrayList<>();
 
-    ArrayList<HashMap<String,String>> listOfEvents = new ArrayList<HashMap<String,String>>();
+    ArrayList<HashMap<String, String>> listOfEvents = new ArrayList<HashMap<String, String>>();
     SimpleAdapter adapterListEvents;
 
     AVLoadingIndicatorView avi;
@@ -51,7 +54,7 @@ public class AllEventsFragment extends Fragment {
     DatabaseReference dref;
     SharedPreferences settings;
 
-    HashMap<String,String> holder;
+    HashMap<String, String> holder;
 
 
     public AllEventsFragment() {
@@ -93,8 +96,7 @@ public class AllEventsFragment extends Fragment {
                 listOfEvents,
                 R.layout.list_view,
                 new String[]{"Content", "Time"},
-                new int[]{R.id.content,R.id.time});
-
+                new int[]{R.id.content, R.id.time});
 
 
         listViewEvents.setAdapter(adapterListEvents);
@@ -139,41 +141,53 @@ public class AllEventsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                if (checkConnection(getActivity().getApplicationContext())) {
+                    dref.child("Users").child(fbuserId).child("Events").addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                            listEventIds.add(dataSnapshot.getKey());
+                            MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
+                            adapterListEvents.notifyDataSetChanged();
+                        }
 
-                dref.child("Users").child(fbuserId).child("Events").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        listEventIds.add(dataSnapshot.getKey());
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                            adapterListEvents.notifyDataSetChanged();
+                        }
 
-                        holder = new HashMap<String, String>();
-                        holder.put("Content", dataSnapshot.child("eventname").getValue().toString());
-                        holder.put("Time", "0:0");
-                        listOfEvents.add(holder);
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+                            MainMenuActivity.mydb.removeEvent(dataSnapshot.getKey().toString());
+                            adapterListEvents.notifyDataSetChanged();
+                        }
 
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                            adapterListEvents.notifyDataSetChanged();
+                        }
 
-                        adapterListEvents.notifyDataSetChanged();
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            adapterListEvents.notifyDataSetChanged();
+                        }
+                    });
+                }
+                    Cursor listCursor = MainMenuActivity.mydb.getSQLiteData();
+                    int numOfEvent = listCursor.getCount();
+                    if (numOfEvent == 0) {
+                        Log.d("databaseInsert", "Cursor Null");
+                    } else {
+                        StringBuffer buffer = new StringBuffer();
+                        while (listCursor.moveToNext()) {
+                            listEventIds.add(listCursor.getString(1));
+                            holder = new HashMap<String, String>();
+                            holder.put("Content", listCursor.getString(5));
+                            holder.put("Time", "0:0");
+                            listOfEvents.add(holder);
+                            adapterListEvents.notifyDataSetChanged();
+                        }
                     }
 
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        adapterListEvents.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        adapterListEvents.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                        adapterListEvents.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        adapterListEvents.notifyDataSetChanged();
-                    }
-                });
             } catch (Exception e) {
 
                 Log.e("Errorr::", "e.toString()");
@@ -208,4 +222,24 @@ public class AllEventsFragment extends Fragment {
     private void stopAnim() {
         avi.smoothToHide();
     }
+
+    public static boolean checkConnection(Context context) {
+        final ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetworkInfo = connMgr.getActiveNetworkInfo();
+
+        if (activeNetworkInfo != null) {
+
+            if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+
+                return true;
+            } else if (activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }
