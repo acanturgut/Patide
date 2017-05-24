@@ -120,11 +120,34 @@ public class UserFragment extends Fragment {
                         }
                     }, 100);
 
-<<<<<<< HEAD
                     boolean passwordFieldCheck = mPassword.getText().toString().equals("") || mPassword.getText().toString() == null;
-=======
-                    boolean passwordFieldCheck = mPassword.getText().toString().equals("") || mPassword.getText() == null;
->>>>>>> b625d3767914496eb08b2ee1c069a31cbfc7fd46
+
+                    if (!user.getEmail().toString().equals(mEmail.getText().toString())) {
+                        if (isEmailValid(mEmail.getText().toString())) {
+                            user.updateEmail(mEmail.getText().toString())
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+
+                                                Log.d("CHECKEMAIL", "User email address not updated: " + mEmail.getText().toString());
+                                                Toast.makeText(getContext(), "E-Mail Changed", Toast.LENGTH_SHORT).show();
+
+                                                dref.child("Users").child(fbuserId).child("UserData").child("email").setValue(mEmail.getText().toString());
+
+                                                editor = settings.edit();
+                                                editor.putString("email", mEmail.getText().toString());
+                                                editor.apply();
+                                                
+                                            }else{
+
+                                                Log.d("CHECKEMAIL", "User email address not updated: " + mEmail.getText().toString());
+                                                Toast.makeText(getContext(), "Error: E-Mail Not Changed", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        }
+                    }
 
                     if (!passwordFieldCheck) {
 
@@ -145,23 +168,6 @@ public class UserFragment extends Fragment {
                                 });
                     }
 
-                    if (!user.getEmail().toString().equals(mEmail.getText().toString())) {
-                        if (isEmailValid(mEmail.getText().toString())) {
-                            user.updateEmail(mEmail.getText().toString())
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d("email**", "User email address updated.");
-                                                Toast.makeText(getContext(), "E-Mail Changed", Toast.LENGTH_SHORT).show();
-                                            }else{
-                                                Toast.makeText(getContext(), "Error: E-Mail Not Changed", Toast.LENGTH_SHORT).show();
-                                                Log.d("email**", "User email address updated.");
-                                            }
-                                        }
-                                    });
-                        }
-                    }
 
                     editable = false;
                     mPassword.setVisibility(View.GONE);
