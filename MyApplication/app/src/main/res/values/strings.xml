@@ -14,9 +14,9 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
     <string name="auth_failed">Authentication Failed</string>
     <string name="title_activity_main_menu">Patide</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">All Events</string>
+    <string name="title_new_event">Create Event</string>
+    <string name="title_settings">Settings</string>
 
     <!-- Patide -->
 
