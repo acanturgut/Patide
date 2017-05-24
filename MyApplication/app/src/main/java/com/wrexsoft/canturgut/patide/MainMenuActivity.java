@@ -94,7 +94,7 @@ public class MainMenuActivity extends AppCompatActivity {
                         String mName = data.getValue().toString();
                         editor.putString("name", mName);
                         Log.d("mName", mName);
-                        Toast.makeText(getBaseContext(), "Welcome Back " + mName, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "Welcome " + mName, Toast.LENGTH_SHORT).show();
                     }
                     if (Objects.equals(data.getKey(), "lastname")) {
                         String mLastName = data.getValue().toString();
