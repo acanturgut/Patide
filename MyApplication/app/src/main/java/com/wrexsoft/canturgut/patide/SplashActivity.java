@@ -21,6 +21,7 @@ public class SplashActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
 
+        getSupportActionBar().hide();
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -37,6 +38,6 @@ public class SplashActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             }
-        }, 100);
+        }, 1000);
     }
 }
