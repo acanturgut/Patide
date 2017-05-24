@@ -1,6 +1,7 @@
 package com.wrexsoft.canturgut.patide;
 
 import android.content.SharedPreferences;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -11,6 +12,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +31,8 @@ public class MainMenuActivity extends AppCompatActivity {
     SharedPreferences.Editor editor;
     ActionBar ab;
     static DatabaseHelper mydb;
+    static BottomNavigationView navigation;
+    static boolean isKeyboardActivated = false;
 
     public BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -67,7 +72,7 @@ public class MainMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
         mydb = new DatabaseHelper(this);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         ab = getSupportActionBar();
@@ -77,7 +82,6 @@ public class MainMenuActivity extends AppCompatActivity {
 
         dref = FirebaseDatabase.getInstance().getReference();
         dref.child("Users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -141,4 +145,31 @@ public class MainMenuActivity extends AppCompatActivity {
         ft.commit();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        final View activityRootView = findViewById(R.id.container);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+                activityRootView.getWindowVisibleDisplayFrame(r);
+
+                int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
+                if (heightDiff > 200) {
+
+                    Log.d("KEYBOARD **", "KEYBOARD IS OPEN");
+                    isKeyboardActivated = true;
+                    navigation.setVisibility(View.GONE);
+
+                }else{
+                    navigation.setVisibility(View.VISIBLE);
+                    Log.d("KEYBOARD **", "KEYBOARD IS NOT OPEN");
+                    isKeyboardActivated = false;
+                }
+            }
+        });
+
+    }
 }

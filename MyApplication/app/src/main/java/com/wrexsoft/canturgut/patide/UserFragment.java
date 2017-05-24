@@ -1,10 +1,10 @@
 package com.wrexsoft.canturgut.patide;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,12 +17,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,37 +32,32 @@ import com.google.firebase.database.FirebaseDatabase;
 public class UserFragment extends Fragment {
 
     View view;
-
     TextView mUserName;
-    Button mEdit;
-    EditText mEmail;
-    EditText mPassword;
-    EditText mLeisure;
-    EditText mWork;
-    EditText mStudy;
     Button mSignout;
 
-    Boolean editable;
-
+    private Button mEdit;
+    private EditText mEmail;
+    private EditText mPassword;
+    private EditText mLeisure;
+    private EditText mWork;
+    private EditText mStudy;
+    private Boolean editable;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    FirebaseUser user;
-    String fbuserId;
-
-    SharedPreferences settings;
-    SharedPreferences.Editor editor;
-
-    DatabaseReference dref;
+    private FirebaseUser user;
+    private String fbuserId;
+    private SharedPreferences settings;
+    private SharedPreferences.Editor editor;
+    private DatabaseReference dref;
 
     public UserFragment() {
-        // Required empty public constructor
-    }
 
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         view = inflater.inflate(R.layout.fragment_user, container, false);
 
         settings = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -68,7 +65,7 @@ public class UserFragment extends Fragment {
         mUserName = (TextView) view.findViewById(R.id.username);
         mUserName.setText(settings.getString("name", "name") + " " + (settings.getString("lastname", "lastname")));
         mEmail = (EditText) view.findViewById(R.id.etEmail);
-        //mEmail.setText("" + settings.getString("email", "email"));
+        mEmail.setText("" + settings.getString("email", "email"));
         mEmail.setTag(mEmail.getKeyListener());
         mEmail.setKeyListener(null);
 
@@ -76,8 +73,7 @@ public class UserFragment extends Fragment {
         mPassword.setTag(mPassword.getKeyListener());
         mPassword.setKeyListener(null);
 
-        mPassword.setVisibility(View.INVISIBLE);
-        mEmail.setVisibility(View.INVISIBLE);
+        mPassword.setVisibility(View.GONE);
 
         mLeisure = (EditText) view.findViewById(R.id.etLeisure);
         mLeisure.setText("" + settings.getString("leisure", "leisure"));
@@ -96,8 +92,6 @@ public class UserFragment extends Fragment {
 
         dref = FirebaseDatabase.getInstance().getReference();
 
-        //fbuserId = settings.getString("FbUserId", "userId");
-
         editable = false;
         mEdit = (Button) view.findViewById(R.id.edit_button);
         mEdit.setOnClickListener(new View.OnClickListener() {
@@ -107,27 +101,54 @@ public class UserFragment extends Fragment {
                 if (!editable) {
                     editable = true;
                     mPassword.setVisibility(View.VISIBLE);
-                    mEmail.setVisibility(View.VISIBLE);
                     mEmail.setKeyListener((KeyListener) mEmail.getTag());
                     mPassword.setKeyListener((KeyListener) mPassword.getTag());
                     mLeisure.setKeyListener((KeyListener) mLeisure.getTag());
                     mWork.setKeyListener((KeyListener) mWork.getTag());
                     mStudy.setKeyListener((KeyListener) mStudy.getTag());
-                    mEdit.setText("Done");
+                    mEdit.setText(R.string.userscreen_button_done);
 
                 } else {
 
-                    hideSoftKeyboard(getActivity());
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (MainMenuActivity.isKeyboardActivated) {
+                                hideSoftKeyboard(getActivity());
+                            }
+                        }
+                    }, 100);
+
+                    boolean passwordFieldCheck = mPassword.getText().equals("") || mPassword.getText() == null;
+
+                    if (!passwordFieldCheck) {
+
+                        user.updatePassword(mPassword.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+
+                                            Toast.makeText(getContext(),"Password Changed",Toast.LENGTH_SHORT).show();
+
+                                        }else{
+
+                                            Toast.makeText(getContext(),"ERROR: Password Not Changed",Toast.LENGTH_SHORT).show();
+
+                                        }
+                                    }
+                                });
+                    }
 
                     editable = false;
-                    mPassword.setVisibility(View.INVISIBLE);
-                    mEmail.setVisibility(View.INVISIBLE);
+                    mPassword.setVisibility(View.GONE);
                     mEmail.setKeyListener(null);
                     mPassword.setKeyListener(null);
                     mLeisure.setKeyListener(null);
                     mWork.setKeyListener(null);
                     mStudy.setKeyListener(null);
-                    mEdit.setText("Edit");
+                    mEdit.setText(R.string.userscreen_button_edit);
 
                     String leisure = mLeisure.getText().toString();
                     String work = mWork.getText().toString();
@@ -142,7 +163,6 @@ public class UserFragment extends Fragment {
                     editor.putString("work", work);
                     editor.putString("study", study);
                     editor.apply();
-
                 }
             }
         });
@@ -175,7 +195,6 @@ public class UserFragment extends Fragment {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
-                // ...
             }
         };
         return view;
@@ -202,5 +221,4 @@ public class UserFragment extends Fragment {
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
-
 }

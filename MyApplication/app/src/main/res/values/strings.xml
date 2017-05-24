@@ -32,6 +32,7 @@
     <!-- User Screen Changeable -->
 
     <string name="userscreen_button_edit">Edit</string>
+    <string name="userscreen_button_done">Done</string>
 
     <!-- User Screen Hints -->
 
