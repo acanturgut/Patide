@@ -172,21 +172,6 @@ public class AllEventsFragment extends Fragment {
                         }
                     });
                 }
-                    Cursor listCursor = MainMenuActivity.mydb.getSQLiteData();
-                    int numOfEvent = listCursor.getCount();
-                    if (numOfEvent == 0) {
-                        Log.d("databaseInsert", "Cursor Null");
-                    } else {
-                        StringBuffer buffer = new StringBuffer();
-                        while (listCursor.moveToNext()) {
-                            listEventIds.add(listCursor.getString(1));
-                            holder = new HashMap<String, String>();
-                            holder.put("Content", listCursor.getString(5));
-                            holder.put("Time", "0:0");
-                            listOfEvents.add(holder);
-                            adapterListEvents.notifyDataSetChanged();
-                        }
-                    }
 
             } catch (Exception e) {
 
@@ -199,7 +184,25 @@ public class AllEventsFragment extends Fragment {
         @Override
         protected void onPostExecute(Void res) {
             runTimer();
+        }
+    }
 
+    public void ListUpdate() {
+        Cursor listCursor = MainMenuActivity.mydb.getSQLiteData();
+        int numOfEvent = listCursor.getCount();
+        if (numOfEvent == 0) {
+            Log.d("databaseInsert", "Cursor Null");
+        } else {
+            StringBuffer buffer = new StringBuffer();
+            while (listCursor.moveToNext()) {
+                listEventIds.add(listCursor.getString(1));
+                holder = new HashMap<String, String>();
+                holder.put("Content", listCursor.getString(5));
+                holder.put("Time", "0:0");
+                holder.put("Date", "G/A/Y S:D");
+                listOfEvents.add(holder);
+                adapterListEvents.notifyDataSetChanged();
+            }
         }
     }
 
@@ -208,10 +211,11 @@ public class AllEventsFragment extends Fragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                ListUpdate();
                 stopAnim();
                 listViewEvents.setVisibility(View.VISIBLE);
             }
-        }, 1000);
+        }, 2500);
     }
 
     private void startAnim() {
