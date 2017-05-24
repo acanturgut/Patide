@@ -32,8 +32,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
+                    android:textStyle="bold"
                     android:inputType="textPersonName"
-                    android:text="@string/eventscreen_name" />
+                    android:hint="@string/eventscreen_name" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -48,14 +49,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/mEstimatedTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:hint="@string/eventscreen_estimated_time"
-                    android:inputType="number"
-                    android:layout_marginBottom="20dp"/>
+                    <EditText
+                        android:id="@+id/mEstimatedTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:ems="10"
+                        android:hint="@string/eventscreen_estimated_time"
+                        android:inputType="number"
+                        android:textStyle="bold" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -84,13 +86,14 @@
 
                 <TextView
 
-                    android:textSize="20dp"
-                    android:layout_margin="@dimen/activity_horizontal_margin"
                     android:id="@+id/mChoosePriority"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
+                    android:layout_margin="@dimen/activity_horizontal_margin"
                     android:layout_weight="1"
-                    android:text="@string/eventscreen_choose_priority" />
+                    android:text="@string/eventscreen_choose_priority"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
                 <SeekBar
                     android:id="@+id/choosePrioritySB"
@@ -114,7 +117,7 @@
                 android:ems="10"
                 android:hint="@string/eventscreen_comment"
                 android:inputType="textMultiLine"
-                android:lines="6"/>
+                android:lines="3"/>
 
             </android.support.design.widget.TextInputLayout>
 
@@ -127,7 +130,11 @@
         android:id="@+id/addEventButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:background="@drawable/button_patide_color"
         android:text="@string/eventscreen_done"
-        android:textColor="@color/patide_white" />
+        android:textAllCaps="false"
+        android:textColor="@color/patide_white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 </LinearLayout>
