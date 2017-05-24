@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,9 +26,10 @@ public class MainMenuActivity extends AppCompatActivity {
     DatabaseReference dref;
     SharedPreferences settings;
     SharedPreferences.Editor editor;
+    ActionBar ab;
 
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    public BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -37,16 +39,19 @@ public class MainMenuActivity extends AppCompatActivity {
             FragmentTransaction ft = fm.beginTransaction();
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    ab.setTitle("All Events");
                     AllEventsFragment allEventsFragment = new AllEventsFragment();
                     ft.replace(R.id.main_frame, allEventsFragment);
                     ft.commit();
                     return true;
                 case R.id.navigation_dashboard:
+                    ab.setTitle("Create Event");
                     NewEventFragment newEventFragment = new NewEventFragment();
                     ft.replace(R.id.main_frame, newEventFragment);
                     ft.commit();
                     return true;
                 case R.id.navigation_notifications:
+                    ab.setTitle("User Settings");
                     UserFragment userFragment = new UserFragment();
                     ft.replace(R.id.main_frame, userFragment);
                     ft.commit();
@@ -65,6 +70,8 @@ public class MainMenuActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        ab = getSupportActionBar();
+
         settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String userID = settings.getString("FbUserId", "userID");
 
@@ -72,26 +79,26 @@ public class MainMenuActivity extends AppCompatActivity {
         dref.child("Users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
 
 
-
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String EMAIL =  dataSnapshot.child("UserData").child("email").getValue().toString();
-                Toast.makeText(getBaseContext(), EMAIL, Toast.LENGTH_SHORT).show();
+                String EMAIL = dataSnapshot.child("UserData").child("email").getValue().toString();
 
-                for (DataSnapshot data : dataSnapshot.child("UserData").getChildren() ){
+
+                for (DataSnapshot data : dataSnapshot.child("UserData").getChildren()) {
                     editor = settings.edit();
                     if (Objects.equals(data.getKey(), "name")) {
-                        String  mName = data.getValue().toString();
+                        String mName = data.getValue().toString();
                         editor.putString("name", mName);
                         Log.d("mName", mName);
+                        Toast.makeText(getBaseContext(), "Welcome Back " + mName, Toast.LENGTH_SHORT).show();
                     }
                     if (Objects.equals(data.getKey(), "lastname")) {
-                        String  mLastName = data.getValue().toString();
+                        String mLastName = data.getValue().toString();
                         editor.putString("lastname", mLastName);
                         Log.d("mLastName", mLastName);
                     }
                     if (Objects.equals(data.getKey(), "email")) {
-                        String  mEmail = data.getValue().toString();
+                        String mEmail = data.getValue().toString();
                         editor.putString("email", mEmail);
                         Log.d("mEmail", mEmail);
                     }
@@ -99,7 +106,7 @@ public class MainMenuActivity extends AppCompatActivity {
                 }
 
 
-                for (DataSnapshot data : dataSnapshot.child("Daily").getChildren() ){
+                for (DataSnapshot data : dataSnapshot.child("Daily").getChildren()) {
                     editor = settings.edit();
                     if (Objects.equals(data.getKey(), "leisure")) {
                         String mLeisure = data.getValue().toString();
@@ -125,6 +132,13 @@ public class MainMenuActivity extends AppCompatActivity {
 
             }
         });
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ab.setTitle("All Events");
+        AllEventsFragment allEventsFragment = new AllEventsFragment();
+        ft.replace(R.id.main_frame, allEventsFragment);
+        ft.commit();
     }
 
 }

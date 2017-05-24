@@ -147,6 +147,8 @@ public class UserFragment extends Fragment {
                 mAuth.signOut();
                 editor = settings.edit();
                 editor.clear();
+                editor.apply();
+
 
             }
         });

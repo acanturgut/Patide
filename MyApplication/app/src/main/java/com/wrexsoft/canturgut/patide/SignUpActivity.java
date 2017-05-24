@@ -116,7 +116,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
-            public static final String TAG = "Firebase Auth State" ;
+            public static final String TAG = "Firebase Auth State";
 
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -146,6 +146,7 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
