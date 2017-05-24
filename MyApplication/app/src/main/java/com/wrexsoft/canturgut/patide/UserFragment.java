@@ -1,6 +1,7 @@
 package com.wrexsoft.canturgut.patide;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -94,7 +96,6 @@ public class UserFragment extends Fragment {
 
         dref = FirebaseDatabase.getInstance().getReference();
 
-
         //fbuserId = settings.getString("FbUserId", "userId");
 
         editable = false;
@@ -115,6 +116,9 @@ public class UserFragment extends Fragment {
                     mEdit.setText("Done");
 
                 } else {
+
+                    hideSoftKeyboard(getActivity());
+
                     editable = false;
                     mPassword.setVisibility(View.INVISIBLE);
                     mEmail.setVisibility(View.INVISIBLE);
@@ -189,6 +193,14 @@ public class UserFragment extends Fragment {
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 
 }
