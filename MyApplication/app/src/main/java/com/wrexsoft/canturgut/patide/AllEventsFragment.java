@@ -24,7 +24,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -52,7 +51,6 @@ public class AllEventsFragment extends Fragment {
     SimpleAdapter adapterListEvents;
 
     AVLoadingIndicatorView avi;
-    ArrayAdapter<String> adapter;
     String fbuserId;
     DatabaseReference dref;
     SharedPreferences settings;
@@ -136,7 +134,7 @@ public class AllEventsFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 //lvAllUsers.setEnabled(false);
-                adapter.getFilter().filter(newText);
+                adapterListEvents.getFilter().filter(newText);
                 return false;
             }
         });

@@ -99,6 +99,7 @@ public class NewEventFragment extends Fragment {
         datepicker.setContentView(R.layout.dialog_date);
 
         final DatePicker dPicker = (DatePicker) datepicker.findViewById(R.id.datePicker);
+        dPicker.setMinDate(System.currentTimeMillis() - 1000);
         Button okBtn = (Button) datepicker.findViewById(R.id.btnDate);
 
         okBtn.setOnClickListener(new View.OnClickListener() {
