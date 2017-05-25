@@ -95,6 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
+        getSupportActionBar().hide();
         mGoogleSignIn = (SignInButton)findViewById(R.id.go_to_google_sign_in);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
@@ -192,6 +193,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // ...
             }
         };
+
+
 
     }
 
