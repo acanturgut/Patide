@@ -69,10 +69,10 @@ public class ApplicationCalculations {
             Log.d("calculations", "today: " + currentTime);
             Log.d("calculations", "event time: " + listOfEventDate[i]);
             long diff = listOfEventDate[i].getTime() - currentTime.getTime();
-            long diffDays = diff / (24 * 60 * 60 * 1000);
+            long diffDays = diff / (12 * 60 * 60 * 1000);
             Log.d("calculations", "Day difference" + diffDays);
-            Log.d("calculations", "Calculate: " + otherEvents + " + " + diffDays +"*" + (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)));
-            otherEvents = otherEvents + (int)diffDays * (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study));
+            Log.d("calculations", "Calculate: " + otherEvents + " + " + diffDays +"*" + (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)) + "/2");
+            otherEvents = otherEvents + (int)diffDays * ((Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)) / 2);
             Log.d("calculations", "Result is " + otherEvents);
             diff = listOfEventDate[i].getTime() - currentTime.getTime();
             diff = diff - (otherEvents*60*60*1000);
