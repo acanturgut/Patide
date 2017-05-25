@@ -111,8 +111,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String EMAIL = dataSnapshot.child("UserData").child("email").getValue().toString();
-
+           //     String EMAIL = dataSnapshot.child("UserData").child("email").getValue().toString();
 
                 for (DataSnapshot data : dataSnapshot.child("UserData").getChildren()) {
                     editor = settings.edit();
