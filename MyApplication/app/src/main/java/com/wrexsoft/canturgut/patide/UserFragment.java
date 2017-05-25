@@ -77,17 +77,17 @@ public class UserFragment extends Fragment {
         mPassword.setVisibility(View.GONE);
 
         mLeisure = (EditText) view.findViewById(R.id.etLeisure);
-        mLeisure.setText("" + settings.getString("leisure", "leisure"));
+        mLeisure.setText("" + settings.getString("leisure", "0"));
         mLeisure.setTag(mLeisure.getKeyListener());
         mLeisure.setKeyListener(null);
 
         mWork = (EditText) view.findViewById(R.id.etWork);
-        mWork.setText("" + settings.getString("work", "work"));
+        mWork.setText("" + settings.getString("work", "0"));
         mWork.setTag(mWork.getKeyListener());
         mWork.setKeyListener(null);
 
         mStudy = (EditText) view.findViewById(R.id.etStudy);
-        mStudy.setText("" + settings.getString("study", "study"));
+        mStudy.setText("" + settings.getString("study", "0"));
         mStudy.setTag(mStudy.getKeyListener());
         mStudy.setKeyListener(null);
 

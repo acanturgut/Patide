@@ -95,8 +95,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
+<<<<<<< HEAD
         getSupportActionBar().hide();
         mGoogleSignIn = (SignInButton)findViewById(R.id.go_to_google_sign_in);
+=======
+        mGoogleSignIn = (SignInButton) findViewById(R.id.go_to_google_sign_in);
+>>>>>>> 9b90def026ca8ca6834ec84c2c1689fbfca690d7
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
         dref = FirebaseDatabase.getInstance().getReference();
@@ -109,10 +113,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-                Toast.makeText(getBaseContext(),"Google Sign In Failed",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Google Sign In Failed", Toast.LENGTH_SHORT).show();
 
             }
-        }).addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+        }).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         mGoogleSignIn.setOnClickListener(new OnClickListener() {
@@ -146,16 +150,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
 
-
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(isPasswordValid(mPasswordView.getText().toString())) {
+                if (isPasswordValid(mPasswordView.getText().toString())) {
 
                     attemptLogin();
 
-                }else{
+                } else {
 
                     mPasswordView.setError("Password is not valid");
                 }
@@ -531,20 +534,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             signInSuccesfull();
 
-                                String userId = "" + user.getUid();
+                            String userId = "" + user.getUid();
 
-                                HashMap userDetails = new HashMap<>();
-                                userDetails.put("name", user.getDisplayName().toString());
-                                userDetails.put("lastname", " ");
-                                userDetails.put("email", user.getEmail().toString());
+                            HashMap userDetails = new HashMap<>();
+                            userDetails.put("name", user.getDisplayName().toString());
+                            userDetails.put("lastname", " ");
+                            userDetails.put("email", user.getEmail().toString());
 
-                                SharedPreferences.Editor editor = settings.edit();
-                                editor.putString("name", user.getDisplayName().toString());
-                                editor.putString("lastname", " ");
-                                editor.putString("email", user.getEmail().toString());
-                                editor.apply();
+                            HashMap dailyDetails = new HashMap<>();
+                            dailyDetails.put("leisure", "0");
+                            dailyDetails.put("work", "0");
+                            dailyDetails.put("study", "0");
 
-                                dref.child("Users").child(userId).child("UserData").setValue(userDetails);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putString("name", user.getDisplayName().toString());
+                            editor.putString("lastname", " ");
+                            editor.putString("email", user.getEmail().toString());
+                            editor.apply();
+
+                            dref.child("Users").child(userId).child("UserData").setValue(userDetails);
+                            dref.child("Users").child(userId).child("Daily").setValue(dailyDetails);
 
                         } else {
                             // If sign in fails, display a message to the user.
