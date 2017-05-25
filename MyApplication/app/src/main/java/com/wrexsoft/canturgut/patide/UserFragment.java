@@ -1,6 +1,7 @@
 package com.wrexsoft.canturgut.patide;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -199,10 +200,7 @@ public class UserFragment extends Fragment {
         mSignout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mAuth.signOut();
-                editor = settings.edit();
-                editor.clear();
-                editor.apply();
+                areYouSure();
             }
         });
 
@@ -258,5 +256,40 @@ public class UserFragment extends Fragment {
                         Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    private void areYouSure() {
+        final Dialog ruSure = new Dialog(getContext());
+
+        ruSure.setTitle("Patide");
+
+        ruSure.setContentView(R.layout.dialog_sure);
+
+        Button yesButton = (Button) ruSure.findViewById(R.id.yes);
+        Button noButton = (Button) ruSure.findViewById(R.id.no);
+
+        noButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                ruSure.dismiss();
+
+            }
+        });
+
+        yesButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                ruSure.dismiss();
+                mAuth.signOut();
+                editor = settings.edit();
+                editor.clear();
+                editor.apply();
+
+            }
+        });
+
+        ruSure.show();
     }
 }

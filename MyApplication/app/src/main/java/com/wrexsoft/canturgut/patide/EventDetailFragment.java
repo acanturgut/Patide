@@ -97,8 +97,8 @@ public class EventDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 hideKeyboardAfterAction();
-                deleteEvent();
-                goToHome();
+                areYouSure();
+
             }
         });
 
@@ -139,6 +139,39 @@ public class EventDetailFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void areYouSure() {
+        final Dialog ruSure = new Dialog(getContext());
+
+        ruSure.setTitle("Patide");
+
+        ruSure.setContentView(R.layout.dialog_sure);
+
+        Button yesButton = (Button) ruSure.findViewById(R.id.yes);
+        Button noButton = (Button) ruSure.findViewById(R.id.no);
+
+        noButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                ruSure.dismiss();
+
+            }
+        });
+
+        yesButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                ruSure.dismiss();
+                deleteEvent();
+                goToHome();
+
+            }
+        });
+
+        ruSure.show();
     }
 
     private void deleteEvent() {
