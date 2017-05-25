@@ -115,4 +115,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d("databaseInsert", "Event with the following ID is removed from kuyruk: " + id);
         database.close();
     }
+
+    public void dropAllTables(){
+        SQLiteDatabase database = this.getWritableDatabase();
+        database.execSQL("DROP TABLE IF EXISTS "+ TABLE_NAME);
+        database.execSQL("DROP TABLE IF EXISTS "+ TABLE_NAME3);
+        database.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
+        database.execSQL("CREATE TABLE " + TABLE_NAME3 + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE)");
+
+        database.close();
+    }
 }

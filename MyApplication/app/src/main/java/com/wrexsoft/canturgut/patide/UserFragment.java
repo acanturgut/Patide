@@ -282,6 +282,7 @@ public class UserFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 ruSure.dismiss();
+                MainMenuActivity.mydb.dropAllTables();
                 mAuth.signOut();
                 editor = settings.edit();
                 editor.clear();
