@@ -103,7 +103,6 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
-
         settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String userID = settings.getString("FbUserId", "userID");
 

@@ -1,9 +1,11 @@
 package com.wrexsoft.canturgut.patide;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -85,6 +88,7 @@ public class EventDetailFragment extends Fragment {
             public void onClick(View v) {
                 editEvent();
                 goToHome();
+                hideKeyboardAfterAction();
             }
         });
 
@@ -94,6 +98,7 @@ public class EventDetailFragment extends Fragment {
             public void onClick(View v) {
                 deleteEvent();
                 goToHome();
+                hideKeyboardAfterAction();
             }
         });
 
@@ -248,6 +253,30 @@ public class EventDetailFragment extends Fragment {
         });
 
         timepicker.show();
+    }
+
+
+    public void hideKeyboardAfterAction(){
+
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (MainMenuActivity.isKeyboardActivated) {
+                    hideSoftKeyboard(getActivity());
+                }
+            }
+        }, 100);
+
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 
 }
