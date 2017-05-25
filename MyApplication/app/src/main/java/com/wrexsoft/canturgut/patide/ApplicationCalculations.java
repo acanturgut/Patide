@@ -1,5 +1,9 @@
 package com.wrexsoft.canturgut.patide;
 
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.util.Log;
+
 import java.util.Date;
 
 /**
@@ -7,15 +11,103 @@ import java.util.Date;
  */
 
 public class ApplicationCalculations {
- 
-    public static Date getTime(String date){
+    public static String[] listOfEventIDs = new String[100];
+    public static String[] listOfEventNames = new String[100];
+    public static String[] listOfEventEstimatedTimes = new String[100];
+    public static Date[] listOfEventDate = new Date[100];
+    public static String[] listOfEventTimeLeft = new String[100];
+
+    public static int getSize() {
+        return size;
+    }
+
+    public static int size = 0;
+    private static SharedPreferences settings;
+    public static String leisure = "5";
+    public static String work = "4";
+    public static String study = "3";
+
+    public static void fillArray() {
+        Cursor listCursor = MainMenuActivity.mydb.getSQLiteData();
+        int numOfEvent = listCursor.getCount();
+        if (numOfEvent == 0) {
+            Log.d("databaseInsert", "Cursor Null");
+        } else {
+            size = 0;
+            StringBuffer buffer = new StringBuffer();
+            while (listCursor.moveToNext()) {
+                listOfEventIDs[size] = listCursor.getString(1);
+                listOfEventNames[size] = listCursor.getString(5);
+                listOfEventEstimatedTimes[size] = listCursor.getString(4);
+                listOfEventDate[size] = getTime(listCursor.getString(3));
+                listOfEventTimeLeft[size] = listCursor.getString(1);
+                size++;
+            }
+            sortArray();
+            calculate();
+        }
+    }
+
+    private static void calculate() {
+        Date currentTime = new Date();
+        for (int i = 0; i < size; i++){
+            int otherEvents = 0;
+            for(int k = 0; k < i ; k++){
+                otherEvents = otherEvents + Integer.parseInt(listOfEventEstimatedTimes[0]);
+            }
+            Log.d("aaaaaaaa", "today: " + currentTime);
+            Log.d("aaaaaaaa", "event time: " + listOfEventDate[i]);
+            Log.d("aaaaaaaa", "event time: " + listOfEventDate[i].getYear());
+            Log.d("aaaaaaaa", "calculate: " + listOfEventDate[i].getTime()  + "  aa:  " +  currentTime.getTime());
+            otherEvents = otherEvents + Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study);
+            long diff = listOfEventDate[i].getTime() - currentTime.getTime();
+            diff = diff - (otherEvents*60*60*1000);
+
+            long diffSeconds = diff / 1000 % 60;
+            long diffMinutes = diff / (60 * 1000) % 60;
+            long diffHours = diff / (60 * 60 * 1000) % 24;
+            long diffDays = diff / (24 * 60 * 60 * 1000);
+            listOfEventTimeLeft[i] = diffDays + " day, " + diffHours + " hour " + diffMinutes + " minutes ";
+        }
+    }
+
+    private static void sortArray() {
+        String tempID;
+        String tempName;
+        String tempEst;
+        Date tempDate;
+        for (int i = 1; i < size; i++) {
+            for (int j = 0; j < size - i; j++) {
+                if (listOfEventDate[j].compareTo(listOfEventDate[j + 1]) < 0) {
+                    tempID = listOfEventIDs[j];
+                    listOfEventIDs[j] = listOfEventIDs[j + 1];
+                    listOfEventIDs[j + 1] = tempID;
+
+                    tempName = listOfEventNames[j];
+                    listOfEventNames[j] = listOfEventNames[j + 1];
+                    listOfEventNames[j + 1] = tempName;
+
+                    tempEst = listOfEventEstimatedTimes[j];
+                    listOfEventEstimatedTimes[j] = listOfEventEstimatedTimes[j + 1];
+                    listOfEventEstimatedTimes[j + 1] = tempEst;
+
+                    tempDate = listOfEventDate[j];
+                    listOfEventDate[j] = listOfEventDate[j + 1];
+                    listOfEventDate[j + 1] = tempDate;
+                }
+            }
+        }
+    }
+
+
+    public static Date getTime(String date) {
         String[] splited = date.split("\\s+");
         String s1 = splited[0];
         String[] dateValues = s1.split("/");
         String s2 = splited[1];
         String[] timeValues = s2.split(":");
         Date mydate = new Date();
-        mydate.setYear( Integer.parseInt(dateValues[2]));
+        mydate.setYear(Integer.parseInt(dateValues[2]));
         mydate.setMonth(Integer.parseInt(dateValues[1]));
         mydate.setDate(Integer.parseInt(dateValues[0]));
         mydate.setHours(Integer.parseInt(timeValues[0]));
@@ -23,6 +115,27 @@ public class ApplicationCalculations {
         return mydate;
     }
 
+    public static String[] getListOfEventIDs() {
+        return listOfEventIDs;
+    }
 
+    public static void setListOfEventIDs(String[] listOfEventIDs) {
+        ApplicationCalculations.listOfEventIDs = listOfEventIDs;
+    }
 
+    public static String[] getListOfEventNames() {
+        return listOfEventNames;
+    }
+
+    public static void setListOfEventNames(String[] listOfEventNames) {
+        ApplicationCalculations.listOfEventNames = listOfEventNames;
+    }
+
+    public static String[] getListOfEventTimeLeft() {
+        return listOfEventTimeLeft;
+    }
+
+    public static void setListOfEventTimeLeft(String[] listOfEventTimeLeft) {
+        ApplicationCalculations.listOfEventTimeLeft = listOfEventTimeLeft;
+    }
 }

@@ -3,7 +3,6 @@ package com.wrexsoft.canturgut.patide;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -79,7 +78,7 @@ public class AllEventsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String eventId = listEventIds.get(position);
                 Bundle bundle = new Bundle();
-                bundle.putString("eventId" , eventId);
+                bundle.putString("eventId", eventId);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("All Events");
@@ -203,35 +202,39 @@ public class AllEventsFragment extends Fragment {
         }
     }
 
-    public void ListUpdate() {
-        Cursor listCursor = MainMenuActivity.mydb.getSQLiteData();
-        int numOfEvent = listCursor.getCount();
-        if (numOfEvent == 0) {
-            Log.d("databaseInsert", "Cursor Null");
-        } else {
-            StringBuffer buffer = new StringBuffer();
-            while (listCursor.moveToNext()) {
-                listEventIds.add(listCursor.getString(1));
-                holder = new HashMap<String, String>();
-                holder.put("Content", listCursor.getString(5));
-                holder.put("Time", listCursor.getString(3));
-                listOfEvents.add(holder);
-                adapterListEvents.notifyDataSetChanged();
-            }
-        }
-    }
 
     private void runTimer() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ListUpdate();
+                ApplicationCalculations.fillArray();
+                final Handler handler2 = new Handler();
+                handler2.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ListUpdate();
+                    }
+                }, 1000);
                 stopAnim();
                 listViewEvents.setVisibility(View.VISIBLE);
             }
         }, 2500);
     }
+
+    public void ListUpdate() {
+        Log.d("listviewsee", "Size: " + ApplicationCalculations.getSize());
+        for (int i = 0; i < ApplicationCalculations.getSize(); i++) {
+            HashMap<String, String> holder = new HashMap<>();
+            listEventIds.add(ApplicationCalculations.getListOfEventIDs()[i]);
+            Log.d("listviewsee", "ListUpdate: " + ApplicationCalculations.getListOfEventNames()[i] + " and i= " + i);
+            holder.put("content", ApplicationCalculations.getListOfEventNames()[i]);
+            holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
+            listOfEvents.add(holder);
+        }
+        adapterListEvents.notifyDataSetChanged();
+    }
+
 
     private void startAnim() {
         avi.show();
