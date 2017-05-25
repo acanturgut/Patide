@@ -99,7 +99,7 @@ public class NewEventFragment extends Fragment {
                             hideSoftKeyboard(getActivity());
                         }
                     }
-                }, 10);
+                }, 100);
 
                 CreateNewEvent();
                 GoToHome();

@@ -167,7 +167,6 @@ public class ApplicationCalculations {
         listOfEventTimeLeft[j+1] = tempTimeLeft;
     }
 
-
     public static Date getTime(String date) {
         String[] splited = date.split("\\s+");
         String s1 = splited[0];

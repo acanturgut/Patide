@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -93,6 +94,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     DatabaseReference dref;
 
     private Button forgotPasswordButton;
+    private boolean isGoogleSignIn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,8 +201,20 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     editor.putString("FbUserId", userID);
                     editor.apply();
                     signInSuccesfull();
-                    Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
-                    startActivity(intent);
+
+                    if(isGoogleSignIn) {
+
+                        //// TODO: 25/05/2017  GOOGLE LOG IN FIRST TIME HANDLED HERE
+
+                        Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                        startActivity(intent);
+
+
+                    }else{
+                        Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                        startActivity(intent);
+                    }
+
                     finish();
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + userID);
                 } else {
@@ -467,9 +481,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             if (registered) {
                                 signInSuccesfull();
-                                Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
-                                startActivity(intent);
-                                finish();
+                                //Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                                //startActivity(intent);
+                                //finish();
 
                             } else {
                                 mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -536,40 +550,47 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
+
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
 
-                            FirebaseUser user = mAuth.getCurrentUser();
+                                    isGoogleSignIn = true;
 
-                            signInSuccesfull();
 
-                            String userId = "" + user.getUid();
+                                    try {
 
-                            HashMap userDetails = new HashMap<>();
-                            userDetails.put("name", user.getDisplayName().toString());
-                            userDetails.put("lastname", " ");
-                            userDetails.put("email", user.getEmail().toString());
+                                        FirebaseUser user = mAuth.getCurrentUser();
 
-                            HashMap dailyDetails = new HashMap<>();
-                            dailyDetails.put("leisure", "0");
-                            dailyDetails.put("work", "0");
-                            dailyDetails.put("study", "0");
+                                        signInSuccesfull();
+                                        String userId = "" + user.getUid();
 
-                            SharedPreferences.Editor editor = settings.edit();
-                            editor.putString("name", user.getDisplayName().toString());
-                            editor.putString("lastname", " ");
-                            editor.putString("email", user.getEmail().toString());
-                            editor.apply();
+                                        HashMap userDetails = new HashMap<>();
+                                        userDetails.put("signin", "yes");
+                                        userDetails.put("name", user.getDisplayName().toString());
+                                        userDetails.put("lastname", " ");
+                                        userDetails.put("email", user.getEmail().toString());
 
-                            dref.child("Users").child(userId).child("UserData").setValue(userDetails);
-                            dref.child("Users").child(userId).child("Daily").setValue(dailyDetails);
+                                        HashMap dailyDetails = new HashMap<>();
+                                        dailyDetails.put("leisure", "0");
+                                        dailyDetails.put("work", "0");
+                                        dailyDetails.put("study", "0");
+
+                                        SharedPreferences.Editor editor = settings.edit();
+                                        editor.putString("name", user.getDisplayName().toString());
+                                        editor.putString("lastname", " ");
+                                        editor.putString("email", user.getEmail().toString());
+                                        editor.apply();
+
+                                        dref.child("Users").child(userId).child("UserData").setValue(userDetails);
+                                        dref.child("Users").child(userId).child("Daily").setValue(dailyDetails);
+
+                                    }catch (Exception e){
+
+                                    }
 
                         } else {
-                            // If sign in fails, display a message to the user.
 
                             Toast.makeText(getBaseContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-
                         }
                         // ...
                     }
