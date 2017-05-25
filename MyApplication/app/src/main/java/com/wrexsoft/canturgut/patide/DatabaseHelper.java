@@ -23,8 +23,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_7 = "PRIORITY";
 
     public static final String TABLE2_NAME = "kuyruk";
-    public static final String COL2_1 = "TABLEID";
-    public static final String COL2_2 = "ID";
     public static final String COL2_3 = "COMMENTS";
     public static final String COL2_4 = "DATE";
     public static final String COL2_5 = "ESTIMATEDTIME";
@@ -38,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
-        db.execSQL("CREATE TABLE " + TABLE2_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
+        db.execSQL("CREATE TABLE " + TABLE2_NAME + " (COMMENTS TEXT, DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT UNIQUE, PRIORITY TEXT)" );
     }
 
     @Override
@@ -86,10 +84,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public boolean insertToKuyruk (String id, String comments, String date, String estimatedtime, String eventname, String priority){
+    public boolean insertToKuyruk (String comments, String date, String estimatedtime, String eventname, String priority){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL2_2,id);
         contentValues.put(COL2_3,comments);
         contentValues.put(COL2_4,date);
         contentValues.put(COL2_5,estimatedtime);
@@ -99,7 +96,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if(result == -1){
             return false;
         }else{
-            Log.d("databaseInsert", COL2_2 + ": " + id);
             Log.d("databaseInsert", COL2_3 + ": " + comments);
             Log.d("databaseInsert", COL2_4 + ": " + date);
             Log.d("databaseInsert", COL2_5 + ": " + estimatedtime);
@@ -110,10 +106,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public void removeFromKuyruk(String id) {
+    public void removeFromKuyruk(String name) {
         SQLiteDatabase database = this.getWritableDatabase();
-        database.execSQL("DELETE FROM " + TABLE2_NAME + " WHERE " + COL2_2 + "= '" + id + "'");
-        Log.d("databaseInsert", "Event with the following ID is removed from kuyruk: " + id);
+        database.execSQL("DELETE FROM " + TABLE2_NAME + " WHERE " + COL2_6 + "= '" + name + "'");
+        Log.d("databaseInsert", "Event with the following ID is removed from kuyruk: " + name);
         database.close();
     }
 
