@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -25,6 +26,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -82,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    private SignInButton mGoogleSignIn;
+    private Button mGoogleSignIn;
 
     private static final int RC_SIGN_IN = 1;
 
@@ -90,12 +92,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     DatabaseReference dref;
 
+    private Button forgotPasswordButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mGoogleSignIn = (SignInButton)findViewById(R.id.go_to_google_sign_in);
+
+        getSupportActionBar().hide();
+        mGoogleSignIn = (Button)findViewById(R.id.go_to_google_sign_in);
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
         dref = FirebaseDatabase.getInstance().getReference();
@@ -108,10 +115,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-                Toast.makeText(getBaseContext(),"Google Sign In Failed",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Google Sign In Failed", Toast.LENGTH_SHORT).show();
 
             }
-        }).addApi(Auth.GOOGLE_SIGN_IN_API,gso)
+        }).addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
         mGoogleSignIn.setOnClickListener(new OnClickListener() {
@@ -145,16 +152,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
 
-
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(isPasswordValid(mPasswordView.getText().toString())) {
+                if (isPasswordValid(mPasswordView.getText().toString())) {
 
                     attemptLogin();
 
-                }else{
+                } else {
 
                     mPasswordView.setError("Password is not valid");
                 }
@@ -166,6 +172,18 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
+
+        forgotPasswordButton = (Button)findViewById(R.id.forget_password);
+
+        forgotPasswordButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ForgotPasswordActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+        });
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -192,7 +210,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // ...
             }
         };
-
     }
 
     private void populateAutoComplete() {
@@ -263,25 +280,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Check for a valid password, if the user entered one.
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
+            //focusView = mPasswordView;
             cancel = true;
         }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            //focusView = mEmailView;
             cancel = true;
         } else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            //focusView = mEmailView;
             cancel = true;
         }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
-            focusView.requestFocus();
+            //focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
@@ -292,12 +309,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@") || email.contains(".");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() >= 6;
     }
 
@@ -458,7 +473,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             } else {
                                 mPasswordView.setError(getString(R.string.error_incorrect_password));
-                                mPasswordView.requestFocus();
+                                //mPasswordView.requestFocus();
                             }
                             // ...
                             showProgress(false);
@@ -528,20 +543,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             signInSuccesfull();
 
-                                String userId = "" + user.getUid();
+                            String userId = "" + user.getUid();
 
-                                HashMap userDetails = new HashMap<>();
-                                userDetails.put("name", user.getDisplayName().toString());
-                                userDetails.put("lastname", " ");
-                                userDetails.put("email", user.getEmail().toString());
+                            HashMap userDetails = new HashMap<>();
+                            userDetails.put("name", user.getDisplayName().toString());
+                            userDetails.put("lastname", " ");
+                            userDetails.put("email", user.getEmail().toString());
 
-                                SharedPreferences.Editor editor = settings.edit();
-                                editor.putString("name", user.getDisplayName().toString());
-                                editor.putString("lastname", " ");
-                                editor.putString("email", user.getEmail().toString());
-                                editor.apply();
+                            HashMap dailyDetails = new HashMap<>();
+                            dailyDetails.put("leisure", "0");
+                            dailyDetails.put("work", "0");
+                            dailyDetails.put("study", "0");
 
-                                dref.child("Users").child(userId).child("UserData").setValue(userDetails);
+                            SharedPreferences.Editor editor = settings.edit();
+                            editor.putString("name", user.getDisplayName().toString());
+                            editor.putString("lastname", " ");
+                            editor.putString("email", user.getEmail().toString());
+                            editor.apply();
+
+                            dref.child("Users").child(userId).child("UserData").setValue(userDetails);
+                            dref.child("Users").child(userId).child("Daily").setValue(dailyDetails);
 
                         } else {
                             // If sign in fails, display a message to the user.

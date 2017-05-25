@@ -31,13 +31,15 @@ public class SplashActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                     startActivity(intent);
+                    finish();
 
                 } else {
 
                     Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                     startActivity(intent);
+                    finish();
                 }
             }
-        }, 1000);
+        }, 2000);
     }
 }
