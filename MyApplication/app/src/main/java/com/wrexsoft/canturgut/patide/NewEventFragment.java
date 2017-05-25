@@ -28,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
+import static com.wrexsoft.canturgut.patide.AllEventsFragment.checkConnection;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -210,10 +212,15 @@ public class NewEventFragment extends Fragment {
         eventDetails.put("comments", commentsString);
         eventDetails.put("date", dateString);
         eventDetails.put("priority", priorityString);
+        if(checkConnection(getActivity().getApplicationContext())){
+            dref.child("Users").child(userID).child("Events").push().setValue(eventDetails);
+            Toast.makeText(getContext(), "Your New Event is Created!", Toast.LENGTH_SHORT).show();
+        }else{
+            MainMenuActivity.mydb.insertToKuyruk(commentsString,dateString,estimatedTimeString,eventNameString,priorityString);
+            Toast.makeText(getContext(), "Your New Event will be created when internet connection is established!", Toast.LENGTH_SHORT).show();
+        }
 
-        dref.child("Users").child(userID).child("Events").push().setValue(eventDetails);
 
-        Toast.makeText(getContext(), "Your New Event is Created!", Toast.LENGTH_SHORT).show();
     }
 
     public static void hideSoftKeyboard(Activity activity) {
