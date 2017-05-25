@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +53,7 @@ public class EventDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view =  inflater.inflate(R.layout.fragment_event_detail, container, false);
+        view = inflater.inflate(R.layout.fragment_event_detail, container, false);
 
         mEventName = (EditText) view.findViewById(R.id.mEventName);
         mEstimatedTime = (EditText) view.findViewById(R.id.mEstimatedTime);
@@ -67,6 +69,9 @@ public class EventDetailFragment extends Fragment {
         mPriority = (SeekBar) view.findViewById(R.id.choosePrioritySB);
         AddEventButton = (Button) view.findViewById(R.id.editEventButton);
 
+        ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ab.setTitle("Event Details");
+        ab.setDisplayHomeAsUpEnabled(true);
         final Bundle bundle = this.getArguments();
 
         if (bundle != null) {
@@ -85,7 +90,7 @@ public class EventDetailFragment extends Fragment {
                 mEstimatedTime.setText(dataSnapshot.child("estimatedtime").getValue().toString());
                 mComments.setText(dataSnapshot.child("comments").getValue().toString());
                 ChooseDateButton.setText(dataSnapshot.child("date").getValue().toString());
-                mPriority.setProgress(Integer.parseInt(dataSnapshot.child("eventname").getValue().toString()));
+                mPriority.setProgress(Integer.parseInt(dataSnapshot.child("priority").getValue().toString()));
             }
 
             @Override
@@ -120,8 +125,8 @@ public class EventDetailFragment extends Fragment {
                 if (dPicker.getMonth() < 10) {
                     month = "0";
                 }
-                int  monthInt = dPicker.getMonth() + 1;
-                ChooseDateButton.setText(day + dPicker.getDayOfMonth() + "/" + month + Integer.toString(monthInt)+ "/" + dPicker.getYear());
+                int monthInt = dPicker.getMonth() + 1;
+                ChooseDateButton.setText(day + dPicker.getDayOfMonth() + "/" + month + Integer.toString(monthInt) + "/" + dPicker.getYear());
                 showTimePicker();
                 datepicker.dismiss();
 

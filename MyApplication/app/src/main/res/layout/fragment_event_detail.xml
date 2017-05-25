@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:background="@drawable/button_patide_color"
-            android:text="@string/eventscreen_done"
+            android:text="Apply Changes"
             android:textAllCaps="false"
             android:textColor="@color/patide_white"
             android:textSize="20sp"

@@ -14,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -81,10 +80,9 @@ public class AllEventsFragment extends Fragment {
                 bundle.putString("eventId", eventId);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("All Events");
-                //ab.setTitle("All Events");
                 EventDetailFragment eventDetailFragment = new EventDetailFragment();
                 eventDetailFragment.setArguments(bundle);
+                ft.addToBackStack(null);
                 ft.replace(R.id.main_frame, eventDetailFragment);
                 ft.commit();
             }
