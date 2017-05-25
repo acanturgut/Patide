@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -15,14 +17,16 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 
 /**
@@ -40,9 +44,15 @@ public class EventDetailFragment extends Fragment {
     EditText mEstimatedTime;
     EditText mComments;
     Button ChooseDateButton;
-    Button AddEventButton;
-    TextView tvChooseDate;
+    Button mEditEvent;
     SeekBar mPriority;
+
+    String eventNameString;
+    String estimatedTimeString;
+    String commentsString;
+    String dateString;
+    String priorityString;
+
 
     public EventDetailFragment() {
         // Required empty public constructor
@@ -60,18 +70,23 @@ public class EventDetailFragment extends Fragment {
         mComments = (EditText) view.findViewById(R.id.mComments);
 
         ChooseDateButton = (Button) view.findViewById(R.id.chooseDateBtn);
-/*        ChooseDateButton.setOnClickListener(new View.OnClickListener() {
+        ChooseDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDatePicker();
             }
-        });*/
+        });
         mPriority = (SeekBar) view.findViewById(R.id.choosePrioritySB);
-        AddEventButton = (Button) view.findViewById(R.id.editEventButton);
-
+        mEditEvent = (Button) view.findViewById(R.id.editEventButton);
+        mEditEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editEvent();
+                goToHome();
+            }
+        });
         ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         ab.setTitle("Event Details");
-        ab.setDisplayHomeAsUpEnabled(true);
         final Bundle bundle = this.getArguments();
 
         if (bundle != null) {
@@ -99,6 +114,34 @@ public class EventDetailFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void goToHome() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("All Events");
+        AllEventsFragment allEventsFragment = new AllEventsFragment();
+        ft.replace(R.id.main_frame, allEventsFragment);
+        ft.commit();
+    }
+
+    private void editEvent() {
+        eventNameString = mEventName.getText().toString();
+        estimatedTimeString = mEstimatedTime.getText().toString();
+        commentsString = mComments.getText().toString();
+        dateString = ChooseDateButton.getText().toString();
+        priorityString = Integer.toString(mPriority.getProgress());
+
+        HashMap<String, Object> eventDetails = new HashMap<>();
+        eventDetails.put("eventname", eventNameString);
+        eventDetails.put("estimatedtime", estimatedTimeString);
+        eventDetails.put("comments", commentsString);
+        eventDetails.put("date", dateString);
+        eventDetails.put("priority", priorityString);
+
+        dref.child("Users").child(fbuserId).child("Events").child(eventId).setValue(eventDetails);
+
+        Toast.makeText(getContext(), "Your Event is Updated!", Toast.LENGTH_SHORT).show();
     }
 
     private void showDatePicker() {
@@ -182,4 +225,5 @@ public class EventDetailFragment extends Fragment {
 
         timepicker.show();
     }
+
 }
