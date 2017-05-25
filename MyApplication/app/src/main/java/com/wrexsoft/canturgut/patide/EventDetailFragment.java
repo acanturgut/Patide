@@ -86,9 +86,9 @@ public class EventDetailFragment extends Fragment {
         mEditEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboardAfterAction();
                 editEvent();
                 goToHome();
-                hideKeyboardAfterAction();
             }
         });
 
@@ -96,9 +96,9 @@ public class EventDetailFragment extends Fragment {
         mDeleteEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                hideKeyboardAfterAction();
                 deleteEvent();
                 goToHome();
-                hideKeyboardAfterAction();
             }
         });
 
