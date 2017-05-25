@@ -53,6 +53,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/button_white_color"
+                android:onClick="sortByPrMethod"
                 android:text="@string/all_events_date"
                 android:textColor="@color/patide_color" />
 

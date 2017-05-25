@@ -60,9 +60,9 @@
     <string name="eventscreen_comment">Comment</string>
     <string name="eventscreen_done">Done</string>
 
-    <string name="all_events_hour">Hour</string>
-    <string name="all_events_day">Day</string>
-    <string name="all_events_date">Date</string>
+    <string name="all_events_hour">Date</string>
+    <string name="all_events_day">Name</string>
+    <string name="all_events_date">Priority</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

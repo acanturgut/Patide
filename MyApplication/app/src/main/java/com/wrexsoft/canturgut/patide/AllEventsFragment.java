@@ -23,7 +23,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -68,6 +67,8 @@ public class AllEventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_all_events, container, false);
+
+        listEventIds.clear();
         listOfEvents.clear();
         avi = (AVLoadingIndicatorView) view.findViewById(R.id.avi);
 
@@ -92,36 +93,34 @@ public class AllEventsFragment extends Fragment {
         });
 
 
-        try {
 
-            ((Button)view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
+            (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT);
+                    Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT).show();
                     ApplicationCalculations.sortArray();
                     appySort();
                 }
             });
-            Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT);
 
-            ((Button)view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
+            (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Toast.makeText(getContext(),"name",Toast.LENGTH_SHORT).show();
                     ApplicationCalculations.sortbyName();
                     appySort();
                 }
             });
 
-            ((Button)view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
+            (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Toast.makeText(getContext(),"pr",Toast.LENGTH_SHORT).show();
                     ApplicationCalculations.sortbyPriority();
                     appySort();
                 }
             });
-        }catch (Exception e){
 
-        }
         new ApplicationCalculations(getContext());
         dref = FirebaseDatabase.getInstance().getReference();
         EventsLoader friendsLoader = new EventsLoader(this);
@@ -136,10 +135,10 @@ public class AllEventsFragment extends Fragment {
 
     }
 
+
     public void appySort(){
         listEventIds.clear();
         listOfEvents.clear();
-        ApplicationCalculations.sortArray();
         for (int i = 0; i < ApplicationCalculations.getSize(); i++) {
             HashMap<String, String> holder = new HashMap<>();
             listEventIds.add(ApplicationCalculations.getListOfEventIDs()[i]);
@@ -147,6 +146,7 @@ public class AllEventsFragment extends Fragment {
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
             listOfEvents.add(holder);
         }
+        Log.d("eeeeeeeeeeeeeeeeeeeeee", "appySort: " + ApplicationCalculations.getListOfEventNames()[0]);
         adapterListEvents.notifyDataSetChanged();
     }
 
