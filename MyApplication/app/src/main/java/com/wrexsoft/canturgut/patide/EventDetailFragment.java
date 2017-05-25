@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class EventDetailFragment extends Fragment {
     EditText mComments;
     Button ChooseDateButton;
     Button mEditEvent;
+    Button mDeleteEvent;
     SeekBar mPriority;
 
     String eventNameString;
@@ -85,6 +87,16 @@ public class EventDetailFragment extends Fragment {
                 goToHome();
             }
         });
+
+        mDeleteEvent = (Button) view.findViewById(R.id.deleteEventButton);
+        mDeleteEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteEvent();
+                goToHome();
+            }
+        });
+
         ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         ab.setTitle("Event Details");
         final Bundle bundle = this.getArguments();
@@ -101,12 +113,20 @@ public class EventDetailFragment extends Fragment {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mEventName.setText(dataSnapshot.child("eventname").getValue().toString());
-                mEstimatedTime.setText(dataSnapshot.child("estimatedtime").getValue().toString());
-                mComments.setText(dataSnapshot.child("comments").getValue().toString());
-                ChooseDateButton.setText(dataSnapshot.child("date").getValue().toString());
-                mPriority.setProgress(Integer.parseInt(dataSnapshot.child("priority").getValue().toString()));
+                if (dataSnapshot != null) {
+                    try {
+                        mEventName.setText(dataSnapshot.child("eventname").getValue().toString());
+                        mEstimatedTime.setText(dataSnapshot.child("estimatedtime").getValue().toString());
+                        mComments.setText(dataSnapshot.child("comments").getValue().toString());
+                        ChooseDateButton.setText(dataSnapshot.child("date").getValue().toString());
+                        mPriority.setProgress(Integer.parseInt(dataSnapshot.child("priority").getValue().toString()));
+                    } catch (NullPointerException e){
+                        Log.e("NPE", e.toString());
+
+                    }
+                }
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -114,6 +134,10 @@ public class EventDetailFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void deleteEvent() {
+        dref.child("Users").child(fbuserId).child("Events").child(eventId).removeValue();
     }
 
     private void goToHome() {
