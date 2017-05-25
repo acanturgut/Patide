@@ -59,14 +59,15 @@ public class ApplicationCalculations {
             Log.d("aaaaaaaa", "event time: " + listOfEventDate[i]);
             Log.d("aaaaaaaa", "event time: " + listOfEventDate[i].getYear());
             Log.d("aaaaaaaa", "calculate: " + listOfEventDate[i].getTime()  + "  aa:  " +  currentTime.getTime());
-            otherEvents = otherEvents + Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study);
             long diff = listOfEventDate[i].getTime() - currentTime.getTime();
+            long diffDays = diff / (24 * 60 * 60 * 1000);
+            Log.d("aaaaaaaa", "çok gün var: " + diffDays);
+            otherEvents = otherEvents + (int)diffDays * (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study));
+            diff = listOfEventDate[i].getTime() - currentTime.getTime();
             diff = diff - (otherEvents*60*60*1000);
-
-            long diffSeconds = diff / 1000 % 60;
             long diffMinutes = diff / (60 * 1000) % 60;
             long diffHours = diff / (60 * 60 * 1000) % 24;
-            long diffDays = diff / (24 * 60 * 60 * 1000);
+            diffDays = diff / (24 * 60 * 60 * 1000);
             listOfEventTimeLeft[i] = diffDays + " day, " + diffHours + " hour " + diffMinutes + " minutes ";
         }
     }
@@ -78,7 +79,7 @@ public class ApplicationCalculations {
         Date tempDate;
         for (int i = 1; i < size; i++) {
             for (int j = 0; j < size - i; j++) {
-                if (listOfEventDate[j].compareTo(listOfEventDate[j + 1]) < 0) {
+                if (listOfEventDate[j].compareTo(listOfEventDate[j + 1]) > 0) {
                     tempID = listOfEventIDs[j];
                     listOfEventIDs[j] = listOfEventIDs[j + 1];
                     listOfEventIDs[j + 1] = tempID;
@@ -107,8 +108,9 @@ public class ApplicationCalculations {
         String s2 = splited[1];
         String[] timeValues = s2.split(":");
         Date mydate = new Date();
-        mydate.setYear(Integer.parseInt(dateValues[2]));
-        mydate.setMonth(Integer.parseInt(dateValues[1]));
+
+        mydate.setYear(Integer.parseInt(dateValues[2]) - 1900);
+        mydate.setMonth(Integer.parseInt(dateValues[1]) -  1);
         mydate.setDate(Integer.parseInt(dateValues[0]));
         mydate.setHours(Integer.parseInt(timeValues[0]));
         mydate.setMinutes(Integer.parseInt(timeValues[1]));

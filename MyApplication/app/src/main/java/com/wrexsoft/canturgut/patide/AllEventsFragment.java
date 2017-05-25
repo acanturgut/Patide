@@ -65,7 +65,7 @@ public class AllEventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_all_events, container, false);
-
+        listOfEvents.clear();
         avi = (AVLoadingIndicatorView) view.findViewById(R.id.avi);
 
         settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -226,7 +226,7 @@ public class AllEventsFragment extends Fragment {
             HashMap<String, String> holder = new HashMap<>();
             listEventIds.add(ApplicationCalculations.getListOfEventIDs()[i]);
             Log.d("listviewsee", "ListUpdate: " + ApplicationCalculations.getListOfEventNames()[i] + " and i= " + i);
-            holder.put("content", ApplicationCalculations.getListOfEventNames()[i]);
+            holder.put("Content", ApplicationCalculations.getListOfEventNames()[i]);
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
             listOfEvents.add(holder);
         }
