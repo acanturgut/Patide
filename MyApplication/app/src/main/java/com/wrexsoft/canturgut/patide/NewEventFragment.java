@@ -4,6 +4,7 @@ package com.wrexsoft.canturgut.patide;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -162,14 +163,27 @@ public class NewEventFragment extends Fragment {
                 String date = "" + ChooseDateButton.getText();
 
                 String hr = "";
-                if (tPicker.getHour() < 10) {
-                    hr = "0";
-                }
                 String min = "";
-                if (tPicker.getMinute() < 10) {
-                    min = "0";
+                if (Build.VERSION.SDK_INT >= 23 ){
+                    if (tPicker.getHour() < 10) {
+                        hr = "0";
+                    }
+                    if (tPicker.getMinute() < 10) {
+                        min = "0";
+                    }
+                    ChooseDateButton.setText(date + " " + hr + tPicker.getHour() + ":" + min + tPicker.getMinute());
+                } else{
+                    if (tPicker.getCurrentHour() < 10) {
+                        hr = "0";
+                    }
+
+                    if (tPicker.getCurrentMinute() < 10) {
+                        min = "0";
+                    }
+                    ChooseDateButton.setText(date + " " + hr + tPicker.getCurrentHour() + ":" + min + tPicker.getCurrentMinute());
+
                 }
-                ChooseDateButton.setText(date + " " + hr + tPicker.getHour() + ":" + min + tPicker.getMinute());
+
                 timepicker.dismiss();
 
             }
@@ -216,7 +230,9 @@ public class NewEventFragment extends Fragment {
             dref.child("Users").child(userID).child("Events").push().setValue(eventDetails);
             Toast.makeText(getContext(), "Your New Event is Created!", Toast.LENGTH_SHORT).show();
         }else{
-            MainMenuActivity.mydb.insertToKuyruk(commentsString,dateString,estimatedTimeString,eventNameString,priorityString);
+            String eventID = eventNameString + estimatedTimeString;
+            MainMenuActivity.mydb.insertToKuyruk(eventID);
+            MainMenuActivity.mydb.insertData(eventID, commentsString, dateString,estimatedTimeString,eventNameString,priorityString);
             Toast.makeText(getContext(), "Your New Event will be created when internet connection is established!", Toast.LENGTH_SHORT).show();
         }
 

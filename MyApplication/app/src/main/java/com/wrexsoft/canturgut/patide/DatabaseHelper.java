@@ -13,6 +13,7 @@ import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "gameos.db";
+
     public static final String TABLE_NAME = "events";
     public static final String COL_1 = "TABLEID";
     public static final String COL_2 = "ID";
@@ -22,12 +23,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String COL_6 = "EVENTNAME";
     public static final String COL_7 = "PRIORITY";
 
-    public static final String TABLE2_NAME = "kuyruk";
-    public static final String COL2_3 = "COMMENTS";
-    public static final String COL2_4 = "DATE";
-    public static final String COL2_5 = "ESTIMATEDTIME";
-    public static final String COL2_6 = "EVENTNAME";
-    public static final String COL2_7 = "PRIORITY";
+    public static final String TABLE_NAME3 = "eventtoadd";
+    public static final String COL2_1 = "TABLEID";
+    public static final String COL2_2 = "ID";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -36,13 +34,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
-        db.execSQL("CREATE TABLE " + TABLE2_NAME + " (COMMENTS TEXT, DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT UNIQUE, PRIORITY TEXT)" );
+        db.execSQL("CREATE TABLE " + TABLE_NAME3 + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXIST " + TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXIST " + TABLE2_NAME);
+        db.execSQL("DROP TABLE IF EXIST " + TABLE_NAME3);
         onCreate(db);
     }
 
@@ -84,35 +82,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public boolean insertToKuyruk (String comments, String date, String estimatedtime, String eventname, String priority){
+    public boolean insertToKuyruk (String id){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL2_3,comments);
-        contentValues.put(COL2_4,date);
-        contentValues.put(COL2_5,estimatedtime);
-        contentValues.put(COL2_6,eventname);
-        contentValues.put(COL2_7,priority);
-        long result = db.insert(TABLE2_NAME,null,contentValues);
+        contentValues.put(COL2_2,id);
+        long result = db.insert(TABLE_NAME3, null,contentValues);
+        Log.d("databaseInsert", "-----------------------");
+        Log.d("databaseInsert", " TRY  ");
+        Log.d("databaseInsert", COL2_2 + ": " + id);
+        Log.d("databaseInsert", "-----------------------");
+
         if(result == -1){
             return false;
         }else{
-            Log.d("databaseInsert", COL2_3 + ": " + comments);
-            Log.d("databaseInsert", COL2_4 + ": " + date);
-            Log.d("databaseInsert", COL2_5 + ": " + estimatedtime);
-            Log.d("databaseInsert", COL2_6 + ": " + eventname);
-            Log.d("databaseInsert", COL2_7 + ": " + priority);
+            Log.d("databaseInsert", "-----------------------");
+            Log.d("databaseInsert", " Following is added to database");
+            Log.d("databaseInsert", COL2_2 + ": " + id);
             Log.d("databaseInsert", "-----------------------");
             return true;
         }
     }
 
-    public void removeFromKuyruk(String name) {
-        SQLiteDatabase database = this.getWritableDatabase();
-        database.execSQL("DELETE FROM " + TABLE2_NAME + " WHERE " + COL2_6 + "= '" + name + "'");
-        Log.d("databaseInsert", "Event with the following ID is removed from kuyruk: " + name);
-        database.close();
+    public Cursor getKuyrukData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor result = db.rawQuery("select * from " + TABLE_NAME3 ,null);
+        return result;
     }
 
-
-
+    public void removeFromKuyruk(String id) {
+        SQLiteDatabase database = this.getWritableDatabase();
+        database.execSQL("DELETE FROM " + TABLE_NAME3 + " WHERE " + COL2_2 + "= '" + id + "'");
+        Log.d("databaseInsert", "Event with the following ID is removed from kuyruk: " + id);
+        database.close();
+    }
 }

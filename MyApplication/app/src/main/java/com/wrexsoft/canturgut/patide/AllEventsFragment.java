@@ -3,6 +3,7 @@ package com.wrexsoft.canturgut.patide;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -25,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -155,6 +157,27 @@ public class AllEventsFragment extends Fragment {
         protected Void doInBackground(Void... params) {
             try {
                 if (checkConnection(getActivity().getApplicationContext())) {
+
+                    Cursor myCursor = MainMenuActivity.mydb.getKuyrukData();
+                    while (myCursor.moveToNext()) {
+                        String eventID = myCursor.getString(1);
+                        Cursor otherDate = MainMenuActivity.mydb.getSQLiteData();
+                        while (otherDate.moveToNext()) {
+                            if (otherDate.getString(1).equals(eventID)) {
+                                HashMap<String, Object> eventDetails = new HashMap<>();
+                                eventDetails.put("eventname", otherDate.getString(5));
+                                eventDetails.put("estimatedtime", otherDate.getString(4));
+                                eventDetails.put("comments", otherDate.getString(2));
+                                eventDetails.put("date", otherDate.getString(3));
+                                eventDetails.put("priority", otherDate.getString(6));
+                                dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").push().setValue(eventDetails);
+                                Log.d("databaseInsert", eventDetails.get("eventname") + " is added since eventID is " + eventID + " and id in database " + otherDate.getString(1));
+                                MainMenuActivity.mydb.removeFromKuyruk(eventID);
+                                MainMenuActivity.mydb.removeEvent(eventID);
+                            }
+                        }
+                    }
+
                     dref.child("Users").child(fbuserId).child("Events").addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
