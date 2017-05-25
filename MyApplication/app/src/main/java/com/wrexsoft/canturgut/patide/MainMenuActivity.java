@@ -1,6 +1,8 @@
 package com.wrexsoft.canturgut.patide;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,7 +12,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -75,7 +79,30 @@ public class MainMenuActivity extends AppCompatActivity {
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+
         ab = getSupportActionBar();
+
+        final Context context = this.getApplicationContext();
+
+        final View activityRootView = findViewById(R.id.container);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int heightDiff = activityRootView.getRootView().getHeight() - activityRootView.getHeight();
+                if (heightDiff > dpToPx(context, 200)) { // if more than 200 dp, it's probably a keyboard...
+
+                    navigation.setVisibility(View.GONE);
+                    Log.d("KEYBOARD **", "KEYBOARD IS OPEN");
+                    isKeyboardActivated = true;
+
+                }else{
+                    navigation.setVisibility(View.VISIBLE);
+                    Log.d("KEYBOARD **", "KEYBOARD IS NOT OPEN");
+                    isKeyboardActivated = false;
+                }
+            }
+        });
+
 
         settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String userID = settings.getString("FbUserId", "userID");
@@ -143,62 +170,10 @@ public class MainMenuActivity extends AppCompatActivity {
         AllEventsFragment allEventsFragment = new AllEventsFragment();
         ft.replace(R.id.main_frame, allEventsFragment);
         ft.commit();
-
-
-        final View activityRootView = findViewById(R.id.container);
-        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Rect r = new Rect();
-
-                activityRootView.getWindowVisibleDisplayFrame(r);
-
-                int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
-                if (heightDiff > 100) {
-
-                    navigation.setVisibility(View.GONE);
-                    Log.d("KEYBOARD **", "KEYBOARD IS OPEN");
-                    isKeyboardActivated = true;
-
-                }else{
-
-                    navigation.setVisibility(View.VISIBLE);
-                    Log.d("KEYBOARD **", "KEYBOARD IS NOT OPEN");
-                    isKeyboardActivated = false;
-
-                }
-            }
-        });
-
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        /*
-
-        final View activityRootView = findViewById(R.id.container);
-        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Rect r = new Rect();
-                activityRootView.getWindowVisibleDisplayFrame(r);
-
-                int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
-                if (heightDiff > 200) {
-                    navigation.setVisibility(View.GONE);
-                    Log.d("KEYBOARD **", "KEYBOARD IS OPEN");
-                    isKeyboardActivated = true;
-
-
-                }else{
-                    navigation.setVisibility(View.VISIBLE);
-                    Log.d("KEYBOARD **", "KEYBOARD IS NOT OPEN");
-                    isKeyboardActivated = false;
-                }
-            }
-        }); */
-
+    public static float dpToPx(Context context, float valueInDp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 }
