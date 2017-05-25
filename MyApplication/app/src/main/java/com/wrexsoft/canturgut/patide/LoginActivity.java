@@ -70,12 +70,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button mGoogleSignIn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
+        mGoogleSignIn = (Button)findViewById(R.id.go_to_google_sign_in);
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -99,6 +101,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(intent);
             }
         });
+
+
+
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

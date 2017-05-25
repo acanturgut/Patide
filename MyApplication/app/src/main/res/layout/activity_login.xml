@@ -17,7 +17,10 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
+        android:textAlignment="textStart"
+        android:textColor="@color/patide_color"
+        android:textSize="30sp"
+        android:textStyle="bold"
         tools:text="@string/action_sign_in" />
 
     <ScrollView
@@ -76,6 +79,19 @@
                 android:textStyle="bold" />
 
             <Button
+                android:id="@+id/go_to_google_sign_in"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_white_color"
+                android:text="@string/google_sign_in"
+                android:textAllCaps="false"
+                android:textColor="@color/patide_dark"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <Button
                 android:id="@+id/go_to_signup_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
@@ -87,6 +103,8 @@
                 android:textColor="@color/patide_white"
                 android:textSize="21sp"
                 android:textStyle="bold" />
+
+
 
             <ProgressBar
                 android:id="@+id/login_progress"

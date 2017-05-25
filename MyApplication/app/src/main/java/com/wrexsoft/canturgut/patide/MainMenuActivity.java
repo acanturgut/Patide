@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -24,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
-public class MainMenuActivity extends AppCompatActivity {
+public class MainMenuActivity extends BaseActivity {
 
     DatabaseReference dref;
     SharedPreferences settings;
@@ -79,6 +80,8 @@ public class MainMenuActivity extends AppCompatActivity {
 
         settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String userID = settings.getString("FbUserId", "userID");
+
+        attachKeyboardListeners();
 
         dref = FirebaseDatabase.getInstance().getReference();
         dref.child("Users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -146,8 +149,24 @@ public class MainMenuActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onShowKeyboard(int keyboardHeight) {
+        // do things when keyboard is shown
+        navigation.setVisibility(View.GONE);
+        isKeyboardActivated = true;
+    }
+
+    @Override
+    protected void onHideKeyboard() {
+        // do things when keyboard is hidden
+        navigation.setVisibility(View.VISIBLE);
+        isKeyboardActivated = false;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
+
+        /*
 
         final View activityRootView = findViewById(R.id.container);
         activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -161,15 +180,15 @@ public class MainMenuActivity extends AppCompatActivity {
 
                     Log.d("KEYBOARD **", "KEYBOARD IS OPEN");
                     isKeyboardActivated = true;
-                    navigation.setVisibility(View.GONE);
+
 
                 }else{
-                    navigation.setVisibility(View.VISIBLE);
+
                     Log.d("KEYBOARD **", "KEYBOARD IS NOT OPEN");
                     isKeyboardActivated = false;
                 }
             }
-        });
+        }); */
 
     }
 }
