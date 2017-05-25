@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -25,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
-public class MainMenuActivity extends BaseActivity {
+public class MainMenuActivity extends AppCompatActivity {
 
     DatabaseReference dref;
     SharedPreferences settings;
@@ -80,8 +79,6 @@ public class MainMenuActivity extends BaseActivity {
 
         settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         String userID = settings.getString("FbUserId", "userID");
-
-        attachKeyboardListeners();
 
         dref = FirebaseDatabase.getInstance().getReference();
         dref.child("Users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -146,20 +143,33 @@ public class MainMenuActivity extends BaseActivity {
         AllEventsFragment allEventsFragment = new AllEventsFragment();
         ft.replace(R.id.main_frame, allEventsFragment);
         ft.commit();
-    }
 
-    @Override
-    protected void onShowKeyboard(int keyboardHeight) {
-        // do things when keyboard is shown
-        navigation.setVisibility(View.GONE);
-        isKeyboardActivated = true;
-    }
 
-    @Override
-    protected void onHideKeyboard() {
-        // do things when keyboard is hidden
-        navigation.setVisibility(View.VISIBLE);
-        isKeyboardActivated = false;
+        final View activityRootView = findViewById(R.id.container);
+        activityRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Rect r = new Rect();
+
+                activityRootView.getWindowVisibleDisplayFrame(r);
+
+                int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
+                if (heightDiff > 100) {
+
+                    navigation.setVisibility(View.GONE);
+                    Log.d("KEYBOARD **", "KEYBOARD IS OPEN");
+                    isKeyboardActivated = true;
+
+                }else{
+
+                    navigation.setVisibility(View.VISIBLE);
+                    Log.d("KEYBOARD **", "KEYBOARD IS NOT OPEN");
+                    isKeyboardActivated = false;
+
+                }
+            }
+        });
+
     }
 
     @Override
@@ -177,13 +187,13 @@ public class MainMenuActivity extends BaseActivity {
 
                 int heightDiff = activityRootView.getRootView().getHeight() - (r.bottom - r.top);
                 if (heightDiff > 200) {
-
+                    navigation.setVisibility(View.GONE);
                     Log.d("KEYBOARD **", "KEYBOARD IS OPEN");
                     isKeyboardActivated = true;
 
 
                 }else{
-
+                    navigation.setVisibility(View.VISIBLE);
                     Log.d("KEYBOARD **", "KEYBOARD IS NOT OPEN");
                     isKeyboardActivated = false;
                 }
