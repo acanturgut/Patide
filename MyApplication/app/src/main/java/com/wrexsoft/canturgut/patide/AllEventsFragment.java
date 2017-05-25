@@ -216,8 +216,10 @@ public class AllEventsFragment extends Fragment {
                 }, 1000);
                 stopAnim();
                 listViewEvents.setVisibility(View.VISIBLE);
+                adapterListEvents.notifyDataSetChanged();
             }
         }, 2500);
+        adapterListEvents.notifyDataSetChanged();
     }
 
     public void ListUpdate() {

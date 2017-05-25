@@ -18,15 +18,12 @@ public class ApplicationCalculations {
     public static String[] listOfEventEstimatedTimes = new String[100];
     public static Date[] listOfEventDate = new Date[100];
     public static String[] listOfEventTimeLeft = new String[100];
+    public static String[] listOfEventPriority = new String[100];
 
     private static Context context;
 
     public ApplicationCalculations(Context context) {
         this.context = context;
-    }
-
-    public static int getSize() {
-        return size;
     }
 
     public static int size = 0;
@@ -47,6 +44,7 @@ public class ApplicationCalculations {
                 listOfEventEstimatedTimes[size] = listCursor.getString(4);
                 listOfEventDate[size] = getTime(listCursor.getString(3));
                 listOfEventTimeLeft[size] = listCursor.getString(1);
+                listOfEventPriority[size] = listCursor.getString(6);
                 size++;
             }
             sortArray();
@@ -65,16 +63,17 @@ public class ApplicationCalculations {
         for (int i = 0; i < size; i++){
             int otherEvents = 0;
             for(int k = 0; k < i ; k++){
-                otherEvents = otherEvents + Integer.parseInt(listOfEventEstimatedTimes[0]);
+                otherEvents = otherEvents + Integer.parseInt(listOfEventEstimatedTimes[k]);
             }
-            Log.d("aaaaaaaa", "today: " + currentTime);
-            Log.d("aaaaaaaa", "event time: " + listOfEventDate[i]);
-            Log.d("aaaaaaaa", "event time: " + listOfEventDate[i].getYear());
-            Log.d("aaaaaaaa", "calculate: " + listOfEventDate[i].getTime()  + "  aa:  " +  currentTime.getTime());
+            Log.d("calculations", "--------------------------------");
+            Log.d("calculations", "today: " + currentTime);
+            Log.d("calculations", "event time: " + listOfEventDate[i]);
             long diff = listOfEventDate[i].getTime() - currentTime.getTime();
             long diffDays = diff / (24 * 60 * 60 * 1000);
-            Log.d("aaaaaaaa", "çok gün var: " + diffDays);
+            Log.d("calculations", "Day difference" + diffDays);
+            Log.d("calculations", "Calculate: " + otherEvents + " + " + diffDays +"*" + (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)));
             otherEvents = otherEvents + (int)diffDays * (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study));
+            Log.d("calculations", "Result is " + otherEvents);
             diff = listOfEventDate[i].getTime() - currentTime.getTime();
             diff = diff - (otherEvents*60*60*1000);
             long diffMinutes = diff / (60 * 1000) % 60;
@@ -89,6 +88,7 @@ public class ApplicationCalculations {
         String tempName;
         String tempEst;
         Date tempDate;
+        String tempPri;
         for (int i = 1; i < size; i++) {
             for (int j = 0; j < size - i; j++) {
                 if (listOfEventDate[j].compareTo(listOfEventDate[j + 1]) > 0) {
@@ -107,6 +107,10 @@ public class ApplicationCalculations {
                     tempDate = listOfEventDate[j];
                     listOfEventDate[j] = listOfEventDate[j + 1];
                     listOfEventDate[j + 1] = tempDate;
+
+                    tempPri = listOfEventPriority[j];
+                    listOfEventPriority[j] = listOfEventPriority[j+1];
+                    listOfEventPriority[j+1] = tempPri;
                 }
             }
         }
@@ -151,5 +155,17 @@ public class ApplicationCalculations {
 
     public static void setListOfEventTimeLeft(String[] listOfEventTimeLeft) {
         ApplicationCalculations.listOfEventTimeLeft = listOfEventTimeLeft;
+    }
+
+    public static String[] getListOfEventPriority() {
+        return listOfEventPriority;
+    }
+
+    public static void setListOfEventPriority(String[] listOfEventPriority) {
+        ApplicationCalculations.listOfEventPriority = listOfEventPriority;
+    }
+
+    public static int getSize() {
+        return size;
     }
 }
