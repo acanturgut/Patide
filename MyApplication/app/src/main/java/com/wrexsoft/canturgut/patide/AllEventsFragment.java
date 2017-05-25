@@ -88,7 +88,7 @@ public class AllEventsFragment extends Fragment {
             }
         });
 
-
+        new ApplicationCalculations(getContext());
         dref = FirebaseDatabase.getInstance().getReference();
         EventsLoader friendsLoader = new EventsLoader(this);
         friendsLoader.execute();

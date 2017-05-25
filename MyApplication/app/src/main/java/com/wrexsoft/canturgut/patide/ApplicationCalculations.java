@@ -1,7 +1,9 @@
 package com.wrexsoft.canturgut.patide;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Date;
@@ -17,15 +19,19 @@ public class ApplicationCalculations {
     public static Date[] listOfEventDate = new Date[100];
     public static String[] listOfEventTimeLeft = new String[100];
 
+    private static Context context;
+
+    public ApplicationCalculations(Context context) {
+        this.context = context;
+    }
+
     public static int getSize() {
         return size;
     }
 
     public static int size = 0;
     private static SharedPreferences settings;
-    public static String leisure = "5";
-    public static String work = "4";
-    public static String study = "3";
+
 
     public static void fillArray() {
         Cursor listCursor = MainMenuActivity.mydb.getSQLiteData();
@@ -49,6 +55,12 @@ public class ApplicationCalculations {
     }
 
     private static void calculate() {
+        settings = PreferenceManager.getDefaultSharedPreferences(context);
+
+        String leisure = settings.getString("leisure", "0");
+        String work = settings.getString("work", "0");
+        String study = settings.getString("study", "0");
+
         Date currentTime = new Date();
         for (int i = 0; i < size; i++){
             int otherEvents = 0;
