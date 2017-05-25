@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -175,6 +176,7 @@ public class NewEventFragment extends Fragment {
     private void GoToHome() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("All Events");
         AllEventsFragment allEventsFragment = new AllEventsFragment();
         ft.replace(R.id.main_frame, allEventsFragment);
         ft.commit();
