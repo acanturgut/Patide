@@ -79,7 +79,27 @@ public class ApplicationCalculations {
             long diffMinutes = diff / (60 * 1000) % 60;
             long diffHours = diff / (60 * 60 * 1000) % 24;
             diffDays = diff / (24 * 60 * 60 * 1000);
-            listOfEventTimeLeft[i] = diffDays + " day, " + diffHours + " hour " + diffMinutes + " minutes ";
+            String showString="";
+            int controller = 0;
+            if(diffDays > 0){
+                if (controller == 1){showString = showString +", ";};
+                controller = 1;
+                showString = showString + diffDays + " days";
+            }else{controller = 0;}
+            if(diffHours > 0){
+                if (controller == 1){showString = showString +", ";};
+                controller = 1;
+                showString = showString + diffHours + " hours";
+            }{controller = 0;}
+            if(diffMinutes > 0 && diffDays < 20){
+                if (controller == 1){showString = showString +", ";};
+                controller = 1;
+                showString = showString + ", " +diffMinutes + " minutes";
+            }{controller = 0;}
+            if (showString.equals("")){
+                showString = showString + "This Event is Passed";
+            }
+            listOfEventTimeLeft[i] = showString;
         }
     }
 
