@@ -103,37 +103,68 @@ public class ApplicationCalculations {
         }
     }
 
-    private static void sortArray() {
+    public static void sortArray() {
+        for (int i = 1; i < size; i++) {
+            for (int j = 0; j < size - i; j++) {
+                if (listOfEventDate[j].compareTo(listOfEventDate[j + 1]) > 0) {
+                    replaceitems(j);
+                }
+            }
+        }
+    }
+
+    public static void sortbyName() {
+
+        for (int i = 1; i < size; i++) {
+            for (int j = 0; j < size - i; j++) {
+                if (listOfEventNames[j].compareTo(listOfEventNames[j + 1]) > 0) {
+                    replaceitems(j);
+                }
+            }
+        }
+    }
+
+    public static void sortbyPriority() {
+
+        for (int i = 1; i < size; i++) {
+            for (int j = 0; j < size - i; j++) {
+                if (listOfEventPriority[j].compareTo(listOfEventPriority[j + 1]) > 0) {
+                    replaceitems(j);
+                }
+            }
+        }
+    }
+
+    private static void replaceitems(int j){
         String tempID;
         String tempName;
         String tempEst;
         Date tempDate;
         String tempPri;
-        for (int i = 1; i < size; i++) {
-            for (int j = 0; j < size - i; j++) {
-                if (listOfEventDate[j].compareTo(listOfEventDate[j + 1]) > 0) {
-                    tempID = listOfEventIDs[j];
-                    listOfEventIDs[j] = listOfEventIDs[j + 1];
-                    listOfEventIDs[j + 1] = tempID;
+        String tempTimeLeft;
+        tempID = listOfEventIDs[j];
+        listOfEventIDs[j] = listOfEventIDs[j + 1];
+        listOfEventIDs[j + 1] = tempID;
 
-                    tempName = listOfEventNames[j];
-                    listOfEventNames[j] = listOfEventNames[j + 1];
-                    listOfEventNames[j + 1] = tempName;
+        tempName = listOfEventNames[j];
+        listOfEventNames[j] = listOfEventNames[j + 1];
+        listOfEventNames[j + 1] = tempName;
 
-                    tempEst = listOfEventEstimatedTimes[j];
-                    listOfEventEstimatedTimes[j] = listOfEventEstimatedTimes[j + 1];
-                    listOfEventEstimatedTimes[j + 1] = tempEst;
+        tempEst = listOfEventEstimatedTimes[j];
+        listOfEventEstimatedTimes[j] = listOfEventEstimatedTimes[j + 1];
+        listOfEventEstimatedTimes[j + 1] = tempEst;
 
-                    tempDate = listOfEventDate[j];
-                    listOfEventDate[j] = listOfEventDate[j + 1];
-                    listOfEventDate[j + 1] = tempDate;
+        tempDate = listOfEventDate[j];
+        listOfEventDate[j] = listOfEventDate[j + 1];
+        listOfEventDate[j + 1] = tempDate;
 
-                    tempPri = listOfEventPriority[j];
-                    listOfEventPriority[j] = listOfEventPriority[j+1];
-                    listOfEventPriority[j+1] = tempPri;
-                }
-            }
-        }
+        tempPri = listOfEventPriority[j];
+        listOfEventPriority[j] = listOfEventPriority[j+1];
+        listOfEventPriority[j+1] = tempPri;
+
+        tempTimeLeft = listOfEventTimeLeft[j];
+        listOfEventTimeLeft[j] = listOfEventTimeLeft[j+1];
+        listOfEventTimeLeft[j+1] = tempTimeLeft;
     }
 
 
