@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.wrexsoft.canturgut.patide.UserFragment">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -38,13 +38,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@+id/linearLayout"
+            android:layout_gravity="right"
             android:text="@string/action_sign_out"
             android:background="@drawable/button_red_color"
             android:textAllCaps="false"
             android:textColor="@color/patite_warning"
             android:textSize="18sp" />
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
