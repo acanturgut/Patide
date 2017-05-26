@@ -26,6 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_NAME3 = "eventtoadd";
     public static final String COL2_1 = "TABLEID";
     public static final String COL2_2 = "ID";
+    public static final String COL2_3 = "METHOD";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
@@ -34,7 +35,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
-        db.execSQL("CREATE TABLE " + TABLE_NAME3 + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE)");
+        db.execSQL("CREATE TABLE " + TABLE_NAME3 + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE, METHOD TEXT)");
     }
 
     @Override
@@ -74,6 +75,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public boolean updateData(String id, String comments, String date, String estimatedtime, String eventname, String priority){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_2,id);
+        contentValues.put(COL_3,comments);
+        contentValues.put(COL_4,date);
+        contentValues.put(COL_5,estimatedtime);
+        contentValues.put(COL_6,eventname);
+        contentValues.put(COL_7,priority);
+        db.update(TABLE_NAME, contentValues, "ID = ?",new String[] {id});
+        return true;
+    }
+
 
     public void removeEvent(String id) {
         SQLiteDatabase database = this.getWritableDatabase();
@@ -82,10 +96,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public boolean insertToKuyruk (String id){
+    public boolean insertToKuyruk (String id, String type){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL2_2,id);
+        contentValues.put(COL2_3,type);
         long result = db.insert(TABLE_NAME3, null,contentValues);
         Log.d("databaseInsert", "-----------------------");
         Log.d("databaseInsert", " TRY  ");

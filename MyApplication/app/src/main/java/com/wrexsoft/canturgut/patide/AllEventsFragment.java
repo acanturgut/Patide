@@ -28,7 +28,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -112,6 +111,7 @@ public class AllEventsFragment extends Fragment {
             }
         });
 
+<<<<<<< HEAD
         (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +120,34 @@ public class AllEventsFragment extends Fragment {
                 appySort();
             }
         });
+=======
+            (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT).show();
+                    ApplicationCalculations.sortArray();
+                    appySort();
+                }
+            });
+
+            (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getContext(),"name",Toast.LENGTH_SHORT).show();
+                    ApplicationCalculations.sortbyName();
+                    appySort();
+                }
+            });
+
+            (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Toast.makeText(getContext(),"pr",Toast.LENGTH_SHORT).show();
+                    ApplicationCalculations.sortbyPriority();
+                    appySort();
+                }
+            });
+>>>>>>> c2f0709007279588cff2728fb94c4d8038606012
 
         new ApplicationCalculations(getContext());
         dref = FirebaseDatabase.getInstance().getReference();
@@ -134,6 +162,7 @@ public class AllEventsFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+<<<<<<< HEAD
     public void resetIndic(){
         for (int i = 0; i < listOfEvents.size() ; i++) {
             ImageView view = (ImageView)listViewEvents.getAdapter().getView(1,null,null).findViewById(R.id.image_prio);
@@ -142,6 +171,9 @@ public class AllEventsFragment extends Fragment {
     }
 
     public void appySort() {
+=======
+    public void appySort(){
+>>>>>>> c2f0709007279588cff2728fb94c4d8038606012
         listEventIds.clear();
         listOfEvents.clear();
         for (int i = 0; i < ApplicationCalculations.getSize(); i++) {
@@ -212,6 +244,7 @@ public class AllEventsFragment extends Fragment {
                     Cursor myCursor = MainMenuActivity.mydb.getKuyrukData();
                     while (myCursor.moveToNext()) {
                         String eventID = myCursor.getString(1);
+                        String type = myCursor.getString(2);
                         Cursor otherDate = MainMenuActivity.mydb.getSQLiteData();
                         while (otherDate.moveToNext()) {
                             if (otherDate.getString(1).equals(eventID)) {
@@ -222,7 +255,13 @@ public class AllEventsFragment extends Fragment {
                                 eventDetails.put("comments", otherDate.getString(2));
                                 eventDetails.put("date", otherDate.getString(3));
                                 eventDetails.put("priority", otherDate.getString(6));
-                                dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").push().setValue(eventDetails);
+                                if(type.equals("insert")){
+                                    dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").push().setValue(eventDetails);
+                                }else if(type.equals("update")){
+                                    dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").child(otherDate.getString(1)).setValue(eventDetails);
+                                }else if(type.equals("delete")){
+                                    dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").child(otherDate.getString(1)).removeValue();
+                                }
                                 Log.d("databaseInsert", eventDetails.get("eventname") + " is added since eventID is " + eventID + " and id in database " + otherDate.getString(1));
                                 MainMenuActivity.mydb.removeFromKuyruk(eventID);
                                 MainMenuActivity.mydb.removeEvent(eventID);
@@ -233,11 +272,22 @@ public class AllEventsFragment extends Fragment {
                     dref.child("Users").child(fbuserId).child("Events").addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+<<<<<<< HEAD
                             listEventIds.add(dataSnapshot.getKey());
                             MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
                             adapterListEvents.notifyDataSetChanged();
                             resetIndic();
                         }
+=======
+                            try{
+                                listEventIds.add(dataSnapshot.getKey());
+                                MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
+                                adapterListEvents.notifyDataSetChanged();
+
+                            }catch (Exception e){
+                            }
+                             }
+>>>>>>> c2f0709007279588cff2728fb94c4d8038606012
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -307,6 +357,8 @@ public class AllEventsFragment extends Fragment {
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
             listOfEvents.add(holder);
         }
+        ApplicationCalculations.sortArray();
+        appySort();
         adapterListEvents.notifyDataSetChanged();
     }
 
