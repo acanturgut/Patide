@@ -25,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -97,7 +96,7 @@ public class AllEventsFragment extends Fragment {
             (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT).show();
                     ApplicationCalculations.sortArray();
                     appySort();
                 }
@@ -106,7 +105,7 @@ public class AllEventsFragment extends Fragment {
             (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(),"name",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(),"name",Toast.LENGTH_SHORT).show();
                     ApplicationCalculations.sortbyName();
                     appySort();
                 }
@@ -115,7 +114,7 @@ public class AllEventsFragment extends Fragment {
             (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(),"pr",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(),"pr",Toast.LENGTH_SHORT).show();
                     ApplicationCalculations.sortbyPriority();
                     appySort();
                 }
@@ -134,7 +133,6 @@ public class AllEventsFragment extends Fragment {
         setHasOptionsMenu(true);
 
     }
-
 
     public void appySort(){
         listEventIds.clear();
@@ -228,10 +226,14 @@ public class AllEventsFragment extends Fragment {
                     dref.child("Users").child(fbuserId).child("Events").addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            listEventIds.add(dataSnapshot.getKey());
-                            MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
-                            adapterListEvents.notifyDataSetChanged();
-                        }
+                            try{
+                                listEventIds.add(dataSnapshot.getKey());
+                                MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
+                                adapterListEvents.notifyDataSetChanged();
+
+                            }catch (Exception e){
+                            }
+                             }
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -302,6 +304,8 @@ public class AllEventsFragment extends Fragment {
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
             listOfEvents.add(holder);
         }
+        ApplicationCalculations.sortArray();
+        appySort();
         adapterListEvents.notifyDataSetChanged();
     }
 

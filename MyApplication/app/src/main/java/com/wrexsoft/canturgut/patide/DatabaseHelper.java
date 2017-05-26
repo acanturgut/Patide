@@ -74,6 +74,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    public boolean updateData(String id, String comments, String date, String estimatedtime, String eventname, String priority){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_2,id);
+        contentValues.put(COL_3,comments);
+        contentValues.put(COL_4,date);
+        contentValues.put(COL_5,estimatedtime);
+        contentValues.put(COL_6,eventname);
+        contentValues.put(COL_7,priority);
+        db.update(TABLE_NAME, contentValues, "ID = ?",new String[] {id});
+        return true;
+    }
+
 
     public void removeEvent(String id) {
         SQLiteDatabase database = this.getWritableDatabase();
