@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
@@ -56,7 +59,6 @@ public class AllEventsFragment extends Fragment {
     DatabaseReference dref;
     SharedPreferences settings;
     HashMap<String, String> holder;
-
 
     public AllEventsFragment() {
         // Required empty public constructor
@@ -92,34 +94,32 @@ public class AllEventsFragment extends Fragment {
             }
         });
 
+        (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "hello", Toast.LENGTH_SHORT).show();
+                ApplicationCalculations.sortArray();
+                appySort();
+            }
+        });
 
+        (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "name", Toast.LENGTH_SHORT).show();
+                ApplicationCalculations.sortbyName();
+                appySort();
+            }
+        });
 
-            (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT).show();
-                    ApplicationCalculations.sortArray();
-                    appySort();
-                }
-            });
-
-            (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getContext(),"name",Toast.LENGTH_SHORT).show();
-                    ApplicationCalculations.sortbyName();
-                    appySort();
-                }
-            });
-
-            (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getContext(),"pr",Toast.LENGTH_SHORT).show();
-                    ApplicationCalculations.sortbyPriority();
-                    appySort();
-                }
-            });
+        (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "pr", Toast.LENGTH_SHORT).show();
+                ApplicationCalculations.sortbyPriority();
+                appySort();
+            }
+        });
 
         new ApplicationCalculations(getContext());
         dref = FirebaseDatabase.getInstance().getReference();
@@ -132,11 +132,16 @@ public class AllEventsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
+    public void resetIndic(){
+        for (int i = 0; i < listOfEvents.size() ; i++) {
+            ImageView view = (ImageView)listViewEvents.getAdapter().getView(1,null,null).findViewById(R.id.image_prio);
+            view.setImageResource(R.drawable.greenindic);
+        }
+    }
 
-    public void appySort(){
+    public void appySort() {
         listEventIds.clear();
         listOfEvents.clear();
         for (int i = 0; i < ApplicationCalculations.getSize(); i++) {
@@ -159,7 +164,6 @@ public class AllEventsFragment extends Fragment {
                 R.layout.list_view,
                 new String[]{"Content", "Time"},
                 new int[]{R.id.content, R.id.time});
-
 
         listViewEvents.setAdapter(adapterListEvents);
     }
@@ -186,11 +190,11 @@ public class AllEventsFragment extends Fragment {
         });
     }
 
-    public class EventsLoader extends AsyncTask<Void, Void, Void> {
+    private class EventsLoader extends AsyncTask<Void, Void, Void> {
 
         AllEventsFragment allEventsFragment;
 
-        public EventsLoader(AllEventsFragment allEventsFragment) {
+        private EventsLoader(AllEventsFragment allEventsFragment) {
             this.allEventsFragment = allEventsFragment;
         }
 
@@ -212,6 +216,7 @@ public class AllEventsFragment extends Fragment {
                         while (otherDate.moveToNext()) {
                             if (otherDate.getString(1).equals(eventID)) {
                                 HashMap<String, Object> eventDetails = new HashMap<>();
+
                                 eventDetails.put("eventname", otherDate.getString(5));
                                 eventDetails.put("estimatedtime", otherDate.getString(4));
                                 eventDetails.put("comments", otherDate.getString(2));
@@ -231,6 +236,7 @@ public class AllEventsFragment extends Fragment {
                             listEventIds.add(dataSnapshot.getKey());
                             MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
                             adapterListEvents.notifyDataSetChanged();
+                            resetIndic();
                         }
 
                         @Override
@@ -270,7 +276,6 @@ public class AllEventsFragment extends Fragment {
         }
     }
 
-
     private void runTimer() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -305,11 +310,9 @@ public class AllEventsFragment extends Fragment {
         adapterListEvents.notifyDataSetChanged();
     }
 
-
     private void startAnim() {
         avi.show();
     }
-
 
     private void stopAnim() {
         avi.smoothToHide();
@@ -332,6 +335,4 @@ public class AllEventsFragment extends Fragment {
         }
         return false;
     }
-
-
 }

@@ -91,15 +91,9 @@ public class NewEventFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (MainMenuActivity.isKeyboardActivated) {
-                            hideSoftKeyboard(getActivity());
-                        }
-                    }
-                }, 100);
+                if (MainMenuActivity.isKeyboardActivated) {
+                    hideSoftKeyboard(getActivity());
+                }
 
                 CreateNewEvent();
                 GoToHome();
@@ -132,8 +126,8 @@ public class NewEventFragment extends Fragment {
                 if (dPicker.getMonth() < 10) {
                     month = "0";
                 }
-                int  monthInt = dPicker.getMonth() + 1;
-                ChooseDateButton.setText(day + dPicker.getDayOfMonth() + "/" + month + Integer.toString(monthInt)+ "/" + dPicker.getYear());
+                int monthInt = dPicker.getMonth() + 1;
+                ChooseDateButton.setText(day + dPicker.getDayOfMonth() + "/" + month + Integer.toString(monthInt) + "/" + dPicker.getYear());
                 showTimePicker();
                 datepicker.dismiss();
 
@@ -164,7 +158,7 @@ public class NewEventFragment extends Fragment {
 
                 String hr = "";
                 String min = "";
-                if (Build.VERSION.SDK_INT >= 23 ){
+                if (Build.VERSION.SDK_INT >= 23) {
                     if (tPicker.getHour() < 10) {
                         hr = "0";
                     }
@@ -172,7 +166,7 @@ public class NewEventFragment extends Fragment {
                         min = "0";
                     }
                     ChooseDateButton.setText(date + " " + hr + tPicker.getHour() + ":" + min + tPicker.getMinute());
-                } else{
+                } else {
                     if (tPicker.getCurrentHour() < 10) {
                         hr = "0";
                     }
@@ -226,17 +220,15 @@ public class NewEventFragment extends Fragment {
         eventDetails.put("comments", commentsString);
         eventDetails.put("date", dateString);
         eventDetails.put("priority", priorityString);
-        if(checkConnection(getActivity().getApplicationContext())){
+        if (checkConnection(getActivity().getApplicationContext())) {
             dref.child("Users").child(userID).child("Events").push().setValue(eventDetails);
             Toast.makeText(getContext(), "Your New Event is Created!", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             String eventID = eventNameString + estimatedTimeString;
             MainMenuActivity.mydb.insertToKuyruk(eventID);
-            MainMenuActivity.mydb.insertData(eventID, commentsString, dateString,estimatedTimeString,eventNameString,priorityString);
+            MainMenuActivity.mydb.insertData(eventID, commentsString, dateString, estimatedTimeString, eventNameString, priorityString);
             Toast.makeText(getContext(), "Your New Event will be created when internet connection is established!", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     public static void hideSoftKeyboard(Activity activity) {
