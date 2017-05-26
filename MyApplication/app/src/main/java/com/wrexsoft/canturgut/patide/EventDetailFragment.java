@@ -32,6 +32,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
+import static com.wrexsoft.canturgut.patide.AllEventsFragment.checkConnection;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -175,7 +177,12 @@ public class EventDetailFragment extends Fragment {
     }
 
     private void deleteEvent() {
-        dref.child("Users").child(fbuserId).child("Events").child(eventId).removeValue();
+        MainMenuActivity.mydb.removeEvent(eventId);
+        if(checkConnection(getActivity().getApplicationContext())){
+            dref.child("Users").child(fbuserId).child("Events").child(eventId).removeValue();
+        }else{
+            MainMenuActivity.mydb.insertToKuyruk(eventId, "delete");
+        }
     }
 
     private void goToHome() {
@@ -201,8 +208,14 @@ public class EventDetailFragment extends Fragment {
         eventDetails.put("date", dateString);
         eventDetails.put("priority", priorityString);
 
-        dref.child("Users").child(fbuserId).child("Events").child(eventId).setValue(eventDetails);
         MainMenuActivity.mydb.updateData(eventId,commentsString,dateString,estimatedTimeString,eventNameString,priorityString);
+        if(checkConnection(getActivity().getApplicationContext())){
+            dref.child("Users").child(fbuserId).child("Events").child(eventId).setValue(eventDetails);
+        }else{
+            MainMenuActivity.mydb.insertToKuyruk(eventId, "update");
+        }
+
+
 
         Toast.makeText(getContext(), "Your Event is Updated!", Toast.LENGTH_SHORT).show();
     }

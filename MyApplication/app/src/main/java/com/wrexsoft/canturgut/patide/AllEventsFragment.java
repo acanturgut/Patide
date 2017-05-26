@@ -206,6 +206,7 @@ public class AllEventsFragment extends Fragment {
                     Cursor myCursor = MainMenuActivity.mydb.getKuyrukData();
                     while (myCursor.moveToNext()) {
                         String eventID = myCursor.getString(1);
+                        String type = myCursor.getString(2);
                         Cursor otherDate = MainMenuActivity.mydb.getSQLiteData();
                         while (otherDate.moveToNext()) {
                             if (otherDate.getString(1).equals(eventID)) {
@@ -215,7 +216,13 @@ public class AllEventsFragment extends Fragment {
                                 eventDetails.put("comments", otherDate.getString(2));
                                 eventDetails.put("date", otherDate.getString(3));
                                 eventDetails.put("priority", otherDate.getString(6));
-                                dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").push().setValue(eventDetails);
+                                if(type.equals("insert")){
+                                    dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").push().setValue(eventDetails);
+                                }else if(type.equals("update")){
+                                    dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").child(otherDate.getString(1)).setValue(eventDetails);
+                                }else if(type.equals("delete")){
+                                    dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").child(otherDate.getString(1)).removeValue();
+                                }
                                 Log.d("databaseInsert", eventDetails.get("eventname") + " is added since eventID is " + eventID + " and id in database " + otherDate.getString(1));
                                 MainMenuActivity.mydb.removeFromKuyruk(eventID);
                                 MainMenuActivity.mydb.removeEvent(eventID);
