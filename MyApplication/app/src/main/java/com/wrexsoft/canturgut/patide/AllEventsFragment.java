@@ -4,7 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.media.Image;
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.annotation.UiThread;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -111,16 +110,7 @@ public class AllEventsFragment extends Fragment {
             }
         });
 
-<<<<<<< HEAD
-        (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "pr", Toast.LENGTH_SHORT).show();
-                ApplicationCalculations.sortbyPriority();
-                appySort();
-            }
-        });
-=======
+
             (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -147,8 +137,7 @@ public class AllEventsFragment extends Fragment {
                     appySort();
                 }
             });
->>>>>>> c2f0709007279588cff2728fb94c4d8038606012
-
+        
         new ApplicationCalculations(getContext());
         dref = FirebaseDatabase.getInstance().getReference();
         EventsLoader friendsLoader = new EventsLoader(this);
