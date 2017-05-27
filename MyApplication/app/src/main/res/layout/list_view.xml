@@ -46,12 +46,12 @@
 
             <ImageView
                 android:id="@+id/image_prio"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
-
                 android:layout_margin="12dp"
-                app:srcCompat="@drawable/ic_notifications_black_24dp" />
+                android:background="@drawable/red"
+                />
 
         </LinearLayout>
 

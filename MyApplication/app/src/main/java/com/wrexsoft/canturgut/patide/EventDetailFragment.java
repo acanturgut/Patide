@@ -59,6 +59,7 @@ public class EventDetailFragment extends Fragment {
     String commentsString;
     String dateString;
     String priorityString;
+    private boolean isAllFieldComlate = false;
 
 
     public EventDetailFragment() {
@@ -89,8 +90,12 @@ public class EventDetailFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 hideKeyboardAfterAction();
-                editEvent();
-                goToHome();
+
+                    editEvent();
+                if(isAllFieldComlate) {
+                    goToHome();
+
+                }
             }
         });
 
@@ -201,23 +206,28 @@ public class EventDetailFragment extends Fragment {
         dateString = ChooseDateButton.getText().toString();
         priorityString = Integer.toString(mPriority.getProgress());
 
-        HashMap<String, Object> eventDetails = new HashMap<>();
-        eventDetails.put("eventname", eventNameString);
-        eventDetails.put("estimatedtime", estimatedTimeString);
-        eventDetails.put("comments", commentsString);
-        eventDetails.put("date", dateString);
-        eventDetails.put("priority", priorityString);
+        if(eventNameString.equals("") || estimatedTimeString.equals("") || commentsString.equals("") || dateString.equals("") || priorityString.equals("") ) {
+            Toast.makeText(getContext(), "Complete All Fields and Try Again ", Toast.LENGTH_SHORT).show();
+        }else {
 
-        MainMenuActivity.mydb.updateData(eventId,commentsString,dateString,estimatedTimeString,eventNameString,priorityString);
-        if(checkConnection(getActivity().getApplicationContext())){
-            dref.child("Users").child(fbuserId).child("Events").child(eventId).setValue(eventDetails);
-        }else{
-            MainMenuActivity.mydb.insertToKuyruk(eventId, "update");
+            HashMap<String, Object> eventDetails = new HashMap<>();
+            eventDetails.put("eventname", eventNameString);
+            eventDetails.put("estimatedtime", estimatedTimeString);
+            eventDetails.put("comments", commentsString);
+            eventDetails.put("date", dateString);
+            eventDetails.put("priority", priorityString);
+
+            MainMenuActivity.mydb.updateData(eventId, commentsString, dateString, estimatedTimeString, eventNameString, priorityString);
+            if (checkConnection(getActivity().getApplicationContext())) {
+                dref.child("Users").child(fbuserId).child("Events").child(eventId).setValue(eventDetails);
+            } else {
+                MainMenuActivity.mydb.insertToKuyruk(eventId, "update");
+            }
+
+            isAllFieldComlate = true;
+            Toast.makeText(getContext(), "Your Event is Updated!", Toast.LENGTH_SHORT).show();
+
         }
-
-
-
-        Toast.makeText(getContext(), "Your Event is Updated!", Toast.LENGTH_SHORT).show();
     }
 
     private void showDatePicker() {

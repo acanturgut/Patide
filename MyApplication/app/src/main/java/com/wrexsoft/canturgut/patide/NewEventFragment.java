@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class NewEventFragment extends Fragment {
 
     SharedPreferences settings;
     String userID;
+    private boolean createEventToken = false;
 
 
     public NewEventFragment() {
@@ -94,9 +96,13 @@ public class NewEventFragment extends Fragment {
                 if (MainMenuActivity.isKeyboardActivated) {
                     hideSoftKeyboard(getActivity());
                 }
-
                 CreateNewEvent();
-                GoToHome();
+
+                if(createEventToken) {
+
+                    GoToHome();
+
+                }
             }
         });
         return view;
@@ -214,25 +220,36 @@ public class NewEventFragment extends Fragment {
         dateString = ChooseDateButton.getText().toString();
         priorityString = Integer.toString(mPriority.getProgress());
 
-        HashMap<String, Object> eventDetails = new HashMap<>();
-        eventDetails.put("eventname", eventNameString);
-        eventDetails.put("estimatedtime", estimatedTimeString);
-        eventDetails.put("comments", commentsString);
-        eventDetails.put("date", dateString);
-        eventDetails.put("priority", priorityString);
-        if (checkConnection(getActivity().getApplicationContext())) {
-            dref.child("Users").child(userID).child("Events").push().setValue(eventDetails);
-            Toast.makeText(getContext(), "Your New Event is Created!", Toast.LENGTH_SHORT).show();
-        } else {
-            String eventID = eventNameString + estimatedTimeString;
-<<<<<<< HEAD
-            MainMenuActivity.mydb.insertToKuyruk(eventID);
-            MainMenuActivity.mydb.insertData(eventID, commentsString, dateString, estimatedTimeString, eventNameString, priorityString);
-=======
-            MainMenuActivity.mydb.insertToKuyruk(eventID, "insert");
-            MainMenuActivity.mydb.insertData(eventID, commentsString, dateString,estimatedTimeString,eventNameString,priorityString);
->>>>>>> c2f0709007279588cff2728fb94c4d8038606012
-            Toast.makeText(getContext(), "Your New Event will be created when internet connection is established!", Toast.LENGTH_SHORT).show();
+        Log.d("THISEVENTCREATE", "CreateNewEvent:" + eventNameString);
+
+
+        if(eventNameString.equals("") || estimatedTimeString.equals("") || commentsString.equals("") || dateString.equals("") || priorityString.equals("") ) {
+
+            Toast.makeText(getContext(), "Complete All Fields and Try Again ", Toast.LENGTH_SHORT).show();
+
+            Log.d("THISEVENTCREATE", "CreateNewEvent: ");
+
+        }else{
+
+            HashMap<String, Object> eventDetails = new HashMap<>();
+            eventDetails.put("eventname", eventNameString);
+            eventDetails.put("estimatedtime", estimatedTimeString);
+            eventDetails.put("comments", commentsString);
+            eventDetails.put("date", dateString);
+            eventDetails.put("priority", priorityString);
+            if (checkConnection(getActivity().getApplicationContext())) {
+                dref.child("Users").child(userID).child("Events").push().setValue(eventDetails);
+                Toast.makeText(getContext(), "Your New Event is Created!", Toast.LENGTH_SHORT).show();
+            } else {
+                String eventID = eventNameString + estimatedTimeString;
+
+                MainMenuActivity.mydb.insertToKuyruk(eventID, "insert");
+                MainMenuActivity.mydb.insertData(eventID, commentsString, dateString, estimatedTimeString, eventNameString, priorityString);
+                Toast.makeText(getContext(), "Your New Event will be created when internet connection is established!", Toast.LENGTH_SHORT).show();
+            }
+
+            createEventToken = true;
+
         }
     }
 
@@ -243,5 +260,4 @@ public class NewEventFragment extends Fragment {
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
-
 }

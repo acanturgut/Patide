@@ -1,10 +1,11 @@
 package com.wrexsoft.canturgut.patide;
 
+import android.app.Application;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -24,10 +25,9 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-
+import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +35,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wang.avi.AVLoadingIndicatorView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,19 +57,23 @@ public class AllEventsFragment extends Fragment {
     SharedPreferences settings;
     HashMap<String, String> holder;
 
+    Drawable greenDrawable;
+
     public AllEventsFragment() {
-        // Required empty public constructor
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
+
         view = inflater.inflate(R.layout.fragment_all_events, container, false);
 
         listEventIds.clear();
         listOfEvents.clear();
         avi = (AVLoadingIndicatorView) view.findViewById(R.id.avi);
+
+        greenDrawable = getResources().getDrawable(R.drawable.green,getActivity().getTheme());
 
         settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         fbuserId = settings.getString("FbUserId", "userId");
@@ -95,7 +98,7 @@ public class AllEventsFragment extends Fragment {
         (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "hello", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Date", Toast.LENGTH_SHORT).show();
                 ApplicationCalculations.sortArray();
                 appySort();
             }
@@ -104,40 +107,40 @@ public class AllEventsFragment extends Fragment {
         (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Name", Toast.LENGTH_SHORT).show();
                 ApplicationCalculations.sortbyName();
                 appySort();
             }
         });
 
 
-            (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT).show();
-                    ApplicationCalculations.sortArray();
-                    appySort();
-                }
-            });
+        (view.findViewById(R.id.sortByDate)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getContext(),"hello",Toast.LENGTH_SHORT).show();
+                ApplicationCalculations.sortArray();
+                appySort();
+            }
+        });
 
-            (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Toast.makeText(getContext(),"name",Toast.LENGTH_SHORT).show();
-                    ApplicationCalculations.sortbyName();
-                    appySort();
-                }
-            });
+        (view.findViewById(R.id.SortbyName)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getContext(),"name",Toast.LENGTH_SHORT).show();
+                ApplicationCalculations.sortbyName();
+                appySort();
+            }
+        });
 
-            (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Toast.makeText(getContext(),"pr",Toast.LENGTH_SHORT).show();
-                    ApplicationCalculations.sortbyPriority();
-                    appySort();
-                }
-            });
-        
+        (view.findViewById(R.id.sortByPriority)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Toast.makeText(getContext(),"pr",Toast.LENGTH_SHORT).show();
+                ApplicationCalculations.sortbyPriority();
+                appySort();
+            }
+        });
+
         new ApplicationCalculations(getContext());
         dref = FirebaseDatabase.getInstance().getReference();
         EventsLoader friendsLoader = new EventsLoader(this);
@@ -151,18 +154,8 @@ public class AllEventsFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-<<<<<<< HEAD
-    public void resetIndic(){
-        for (int i = 0; i < listOfEvents.size() ; i++) {
-            ImageView view = (ImageView)listViewEvents.getAdapter().getView(1,null,null).findViewById(R.id.image_prio);
-            view.setImageResource(R.drawable.greenindic);
-        }
-    }
-
     public void appySort() {
-=======
-    public void appySort(){
->>>>>>> c2f0709007279588cff2728fb94c4d8038606012
+
         listEventIds.clear();
         listOfEvents.clear();
         for (int i = 0; i < ApplicationCalculations.getSize(); i++) {
@@ -170,9 +163,24 @@ public class AllEventsFragment extends Fragment {
             listEventIds.add(ApplicationCalculations.getListOfEventIDs()[i]);
             holder.put("Content", ApplicationCalculations.getListOfEventNames()[i]);
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
+
+            if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 0 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 1) {
+
+                holder.put("Image", Integer.toString(R.drawable.green));
+
+            }else if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 2 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 3) {
+
+                holder.put("Image", Integer.toString(R.drawable.yellow));
+
+            }else{
+
+                holder.put("Image", Integer.toString(R.drawable.red));
+
+            }
+
             listOfEvents.add(holder);
         }
-        Log.d("eeeeeeeeeeeeeeeeeeeeee", "appySort: " + ApplicationCalculations.getListOfEventNames()[0]);
+
         adapterListEvents.notifyDataSetChanged();
     }
 
@@ -183,19 +191,21 @@ public class AllEventsFragment extends Fragment {
         adapterListEvents = new SimpleAdapter(getActivity(),
                 listOfEvents,
                 R.layout.list_view,
-                new String[]{"Content", "Time"},
-                new int[]{R.id.content, R.id.time});
+                new String[]{"Content", "Time","Image"},
+                new int[]{R.id.content, R.id.time, R.id.image_prio});
 
         listViewEvents.setAdapter(adapterListEvents);
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
         inflater.inflate(R.menu.menu_search, menu);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
                 //lvAllUsers.setEnabled(true);
@@ -227,28 +237,36 @@ public class AllEventsFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
+
             try {
+
                 if (checkConnection(getActivity().getApplicationContext())) {
 
                     Cursor myCursor = MainMenuActivity.mydb.getKuyrukData();
+
+                    int i = 0;
+
                     while (myCursor.moveToNext()) {
+
                         String eventID = myCursor.getString(1);
                         String type = myCursor.getString(2);
                         Cursor otherDate = MainMenuActivity.mydb.getSQLiteData();
-                        while (otherDate.moveToNext()) {
-                            if (otherDate.getString(1).equals(eventID)) {
-                                HashMap<String, Object> eventDetails = new HashMap<>();
 
+                        while (otherDate.moveToNext()) {
+
+                            if (otherDate.getString(1).equals(eventID)) {
+
+                                HashMap<String, Object> eventDetails = new HashMap<>();
                                 eventDetails.put("eventname", otherDate.getString(5));
                                 eventDetails.put("estimatedtime", otherDate.getString(4));
                                 eventDetails.put("comments", otherDate.getString(2));
                                 eventDetails.put("date", otherDate.getString(3));
                                 eventDetails.put("priority", otherDate.getString(6));
-                                if(type.equals("insert")){
+                                if (type.equals("insert")) {
                                     dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").push().setValue(eventDetails);
-                                }else if(type.equals("update")){
+                                } else if (type.equals("update")) {
                                     dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").child(otherDate.getString(1)).setValue(eventDetails);
-                                }else if(type.equals("delete")){
+                                } else if (type.equals("delete")) {
                                     dref.child("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Events").child(otherDate.getString(1)).removeValue();
                                 }
                                 Log.d("databaseInsert", eventDetails.get("eventname") + " is added since eventID is " + eventID + " and id in database " + otherDate.getString(1));
@@ -261,22 +279,15 @@ public class AllEventsFragment extends Fragment {
                     dref.child("Users").child(fbuserId).child("Events").addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-<<<<<<< HEAD
-                            listEventIds.add(dataSnapshot.getKey());
-                            MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
-                            adapterListEvents.notifyDataSetChanged();
-                            resetIndic();
-                        }
-=======
-                            try{
+                            try {
                                 listEventIds.add(dataSnapshot.getKey());
                                 MainMenuActivity.mydb.insertData(dataSnapshot.getKey().toString(), dataSnapshot.child("comments").getValue().toString(), dataSnapshot.child("date").getValue().toString(), dataSnapshot.child("estimatedtime").getValue().toString(), dataSnapshot.child("eventname").getValue().toString(), dataSnapshot.child("priority").getValue().toString());
                                 adapterListEvents.notifyDataSetChanged();
 
-                            }catch (Exception e){
+                            } catch (Exception e) {
                             }
-                             }
->>>>>>> c2f0709007279588cff2728fb94c4d8038606012
+                        }
+
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -333,6 +344,7 @@ public class AllEventsFragment extends Fragment {
                 adapterListEvents.notifyDataSetChanged();
             }
         }, 2500);
+
         adapterListEvents.notifyDataSetChanged();
     }
 
@@ -342,12 +354,27 @@ public class AllEventsFragment extends Fragment {
             HashMap<String, String> holder = new HashMap<>();
             listEventIds.add(ApplicationCalculations.getListOfEventIDs()[i]);
             Log.d("listviewsee", "ListUpdate: " + ApplicationCalculations.getListOfEventNames()[i] + " and i= " + i);
+            Log.d("COUNTER_MEASURE", "counter: " + i);
             holder.put("Content", ApplicationCalculations.getListOfEventNames()[i]);
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
+
+            if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 0 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 1) {
+
+                holder.put("Image", Integer.toString(R.drawable.green));
+
+            }else if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 2 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 3) {
+
+                holder.put("Image", Integer.toString(R.drawable.yellow));
+
+            }else{
+
+                holder.put("Image", Integer.toString(R.drawable.red));
+
+            }
+
             listOfEvents.add(holder);
         }
-        ApplicationCalculations.sortArray();
-        appySort();
+
         adapterListEvents.notifyDataSetChanged();
     }
 

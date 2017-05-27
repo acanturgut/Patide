@@ -21,6 +21,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     EditText emailField;
     TextView field;
 
+    Button goBack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +32,20 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         field = (TextView)findViewById(R.id.check_email_field);
 
         field.setText("-");
+
+        goBack = (Button)findViewById(R.id.go_back);
+
+        goBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+                finish();
+
+
+            }
+        });
 
         sendEmail = (Button)findViewById(R.id.forget_password);
         sendEmail.setOnClickListener(new View.OnClickListener() {
