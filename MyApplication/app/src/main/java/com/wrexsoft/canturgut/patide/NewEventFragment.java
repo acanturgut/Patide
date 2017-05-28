@@ -245,7 +245,7 @@ public class NewEventFragment extends Fragment {
 
                 MainMenuActivity.mydb.insertToKuyruk(eventID, "insert");
                 MainMenuActivity.mydb.insertData(eventID, commentsString, dateString, estimatedTimeString, eventNameString, priorityString);
-                Toast.makeText(getContext(), "Your New Event will be created when internet connection is established!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "Your New Event will be created when internet connection is established!", Toast.LENGTH_SHORT).show();
             }
 
             createEventToken = true;

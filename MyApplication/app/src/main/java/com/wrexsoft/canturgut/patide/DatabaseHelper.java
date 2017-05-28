@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT UNIQUE, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
         db.execSQL("CREATE TABLE " + TABLE_NAME3 + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE, METHOD TEXT)");
     }
 
@@ -54,6 +54,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_5,estimatedtime);
         contentValues.put(COL_6,eventname);
         contentValues.put(COL_7,priority);
+
         long result = db.insert(TABLE_NAME,null,contentValues);
         if(result == -1){
             return false;

@@ -1,17 +1,19 @@
 package com.wrexsoft.canturgut.patide;
 
-import android.app.Application;
 import android.app.SearchManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,8 +38,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.wang.avi.AVLoadingIndicatorView;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import me.everything.providers.android.calendar.CalendarProvider;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -148,11 +158,17 @@ public class AllEventsFragment extends Fragment {
         return view;
     }
 
+
+    List<me.everything.providers.android.calendar.Calendar> calenrdars;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        Utility.readCalendarEvent(getContext());
+
+
     }
+
 
     public void appySort() {
 
@@ -337,12 +353,12 @@ public class AllEventsFragment extends Fragment {
                     public void run() {
                         ListUpdate();
                     }
-                }, 1000);
+                }, 2000);
                 stopAnim();
                 listViewEvents.setVisibility(View.VISIBLE);
                 adapterListEvents.notifyDataSetChanged();
             }
-        }, 2500);
+        }, 3500);
 
         adapterListEvents.notifyDataSetChanged();
     }
@@ -402,4 +418,9 @@ public class AllEventsFragment extends Fragment {
         }
         return false;
     }
+
+
 }
+
+
+
