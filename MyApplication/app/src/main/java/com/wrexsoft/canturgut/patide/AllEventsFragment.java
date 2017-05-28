@@ -288,7 +288,6 @@ public class AllEventsFragment extends Fragment {
                             }
                         }
 
-
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                             adapterListEvents.notifyDataSetChanged();

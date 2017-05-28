@@ -4,6 +4,7 @@ package com.wrexsoft.canturgut.patide;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -91,8 +92,8 @@ public class EventDetailFragment extends Fragment {
             public void onClick(View v) {
                 hideKeyboardAfterAction();
 
-                    editEvent();
-                if(isAllFieldComlate) {
+                editEvent();
+                if (isAllFieldComlate) {
                     goToHome();
 
                 }
@@ -183,9 +184,9 @@ public class EventDetailFragment extends Fragment {
 
     private void deleteEvent() {
         MainMenuActivity.mydb.removeEvent(eventId);
-        if(checkConnection(getActivity().getApplicationContext())){
+        if (checkConnection(getActivity().getApplicationContext())) {
             dref.child("Users").child(fbuserId).child("Events").child(eventId).removeValue();
-        }else{
+        } else {
             MainMenuActivity.mydb.insertToKuyruk(eventId, "delete");
         }
     }
@@ -206,9 +207,9 @@ public class EventDetailFragment extends Fragment {
         dateString = ChooseDateButton.getText().toString();
         priorityString = Integer.toString(mPriority.getProgress());
 
-        if(eventNameString.equals("") || estimatedTimeString.equals("") || commentsString.equals("") || dateString.equals("") || priorityString.equals("") ) {
+        if (eventNameString.equals("") || estimatedTimeString.equals("") || commentsString.equals("") || dateString.equals("") || priorityString.equals("")) {
             Toast.makeText(getContext(), "Complete All Fields and Try Again ", Toast.LENGTH_SHORT).show();
-        }else {
+        } else {
 
             HashMap<String, Object> eventDetails = new HashMap<>();
             eventDetails.put("eventname", eventNameString);
@@ -285,15 +286,34 @@ public class EventDetailFragment extends Fragment {
                 String date = "" + ChooseDateButton.getText();
 
                 String hr = "";
-                if (tPicker.getHour() < 10) {
-                    hr = "0";
-                }
                 String min = "";
-                if (tPicker.getMinute() < 10) {
-                    min = "0";
+
+                if (Build.VERSION.SDK_INT >= 23) {
+
+
+                    if (tPicker.getHour() < 10) {
+                        hr = "0";
+                    }
+
+                    if (tPicker.getMinute() < 10) {
+                        min = "0";
+                    }
+                    ChooseDateButton.setText(date + " " + hr + tPicker.getHour() + ":" + min + tPicker.getMinute());
+                    timepicker.dismiss();
+
+
+                } else {
+                    if (tPicker.getCurrentHour() < 10) {
+                        hr = "0";
+                    }
+
+                    if (tPicker.getCurrentMinute() < 10) {
+                        min = "0";
+                    }
+                    ChooseDateButton.setText(date + " " + hr + tPicker.getCurrentHour() + ":" + min + tPicker.getCurrentMinute());
+
                 }
-                ChooseDateButton.setText(date + " " + hr + tPicker.getHour() + ":" + min + tPicker.getMinute());
-                timepicker.dismiss();
+
 
             }
         });

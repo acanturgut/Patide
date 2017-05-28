@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -284,6 +285,11 @@ public class UserFragment extends Fragment {
                 ruSure.dismiss();
                 MainMenuActivity.mydb.dropAllTables();
                 mAuth.signOut();
+                try {
+                    LoginManager.getInstance().logOut();
+                }catch(Exception e){
+
+                }
                 editor = settings.edit();
                 editor.clear();
                 editor.apply();

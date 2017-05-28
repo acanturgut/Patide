@@ -35,17 +35,24 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -67,6 +74,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private static final String TAG = "FACEBOOK_FIREBASE" ;
 
     SharedPreferences settings;
     SharedPreferences.Editor editor;
@@ -96,14 +104,49 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private Button forgotPasswordButton;
     private boolean isGoogleSignIn = false;
 
+    private CallbackManager mCallbackManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
 
+        mCallbackManager = CallbackManager.Factory.create();
+
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = (LoginButton) findViewById(R.id.button_facebook_login);
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+
+
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+
+
+
+            }
+        });
+
+        // [END initialize_fblogin]
+
+
+
         getSupportActionBar().hide();
-        mGoogleSignIn = (Button)findViewById(R.id.go_to_google_sign_in);
+        mGoogleSignIn = (Button) findViewById(R.id.go_to_google_sign_in);
 
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
@@ -175,7 +218,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
 
 
-        forgotPasswordButton = (Button)findViewById(R.id.forget_password);
+        forgotPasswordButton = (Button) findViewById(R.id.forget_password);
 
         forgotPasswordButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -202,14 +245,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     editor.apply();
                     signInSuccesfull();
 
-                    if(isGoogleSignIn) {
+                    if (isGoogleSignIn) {
 
                         //// TODO: 25/05/2017  GOOGLE LOG IN FIRST TIME HANDLED HERE
 
                         Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                         startActivity(intent);
 
-                    }else{
+                    } else {
                         Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                         startActivity(intent);
                     }
@@ -224,6 +267,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         };
     }
+
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -528,18 +572,75 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                // Google Sign In was successful, authenticate with Firebase
+
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // Google Sign In failed, update UI appropriately
-                // ...
+
             }
         }
+
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            try {
+
+                                signInSuccesfull();
+                                String userId = "" + user.getUid();
+
+                                HashMap userDetails = new HashMap<>();
+                                userDetails.put("signin", "yes");
+                                userDetails.put("name", user.getDisplayName().toString());
+                                userDetails.put("lastname", " ");
+                                userDetails.put("email", user.getEmail().toString());
+
+                                HashMap dailyDetails = new HashMap<>();
+                                dailyDetails.put("leisure", "0");
+                                dailyDetails.put("work", "0");
+                                dailyDetails.put("study", "0");
+
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("name", user.getDisplayName().toString());
+                                editor.putString("lastname", " ");
+                                editor.putString("email", user.getEmail().toString());
+                                editor.apply();
+
+                                dref.child("Users").child(userId).child("UserData").setValue(userDetails);
+                                dref.child("Users").child(userId).child("Daily").setValue(dailyDetails);
+
+                            } catch (Exception e) {
+
+                            }
+
+
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+
+                            Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+
+                        // ...
+                    }
+                });
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
@@ -552,46 +653,44 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                         if (task.isSuccessful()) {
 
-                                    isGoogleSignIn = true;
+                            isGoogleSignIn = true;
 
+                            try {
 
-                                    try {
+                                FirebaseUser user = mAuth.getCurrentUser();
 
-                                        FirebaseUser user = mAuth.getCurrentUser();
+                                signInSuccesfull();
+                                String userId = "" + user.getUid();
 
-                                        signInSuccesfull();
-                                        String userId = "" + user.getUid();
+                                HashMap userDetails = new HashMap<>();
+                                userDetails.put("signin", "yes");
+                                userDetails.put("name", user.getDisplayName().toString());
+                                userDetails.put("lastname", " ");
+                                userDetails.put("email", user.getEmail().toString());
 
-                                        HashMap userDetails = new HashMap<>();
-                                        userDetails.put("signin", "yes");
-                                        userDetails.put("name", user.getDisplayName().toString());
-                                        userDetails.put("lastname", " ");
-                                        userDetails.put("email", user.getEmail().toString());
+                                HashMap dailyDetails = new HashMap<>();
+                                dailyDetails.put("leisure", "0");
+                                dailyDetails.put("work", "0");
+                                dailyDetails.put("study", "0");
 
-                                        HashMap dailyDetails = new HashMap<>();
-                                        dailyDetails.put("leisure", "0");
-                                        dailyDetails.put("work", "0");
-                                        dailyDetails.put("study", "0");
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString("name", user.getDisplayName().toString());
+                                editor.putString("lastname", " ");
+                                editor.putString("email", user.getEmail().toString());
+                                editor.apply();
 
-                                        SharedPreferences.Editor editor = settings.edit();
-                                        editor.putString("name", user.getDisplayName().toString());
-                                        editor.putString("lastname", " ");
-                                        editor.putString("email", user.getEmail().toString());
-                                        editor.apply();
+                                dref.child("Users").child(userId).child("UserData").setValue(userDetails);
+                                dref.child("Users").child(userId).child("Daily").setValue(dailyDetails);
 
-                                        dref.child("Users").child(userId).child("UserData").setValue(userDetails);
-                                        dref.child("Users").child(userId).child("Daily").setValue(dailyDetails);
+                            } catch (Exception e) {
 
-                                    }catch (Exception e){
-
-                                    }
+                            }
 
                         } else {
 
                             Toast.makeText(getBaseContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-                        // ...
                     }
                 });
     }
