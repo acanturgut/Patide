@@ -176,7 +176,6 @@ public class AllEventsFragment extends Fragment {
         }
     }
 
-
     public void appySort() {
 
         listEventIds.clear();

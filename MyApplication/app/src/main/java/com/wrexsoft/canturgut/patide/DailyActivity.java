@@ -28,7 +28,6 @@ public class DailyActivity extends AppCompatActivity {
 
     DatabaseReference dref;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +46,7 @@ public class DailyActivity extends AppCompatActivity {
 
         dref = FirebaseDatabase.getInstance().getReference();
         settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        fbuserId  = settings.getString("FbUserId", "userID");
+        fbuserId = settings.getString("FbUserId", "userID");
 
     }
 

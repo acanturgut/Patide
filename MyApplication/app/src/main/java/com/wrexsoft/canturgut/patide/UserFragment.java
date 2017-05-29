@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ public class UserFragment extends Fragment {
     View view;
     TextView mUserName;
     Button mSignout;
+    Switch cllanderSwitch;
 
     private Button mEdit;
     private EditText mEmail;
@@ -57,8 +59,7 @@ public class UserFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_user, container, false);
 
@@ -96,6 +97,18 @@ public class UserFragment extends Fragment {
 
         editable = false;
         mEdit = (Button) view.findViewById(R.id.edit_button);
+
+        cllanderSwitch = (Switch) view.findViewById(R.id.callender_acticate);
+
+        boolean calHolder = false;
+
+        if (settings.getBoolean("isImportCalendar", calHolder)) {
+            cllanderSwitch.setChecked(true);
+
+        } else {
+            cllanderSwitch.setChecked(false);
+        }
+
         mEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -140,8 +153,8 @@ public class UserFragment extends Fragment {
                                                 editor = settings.edit();
                                                 editor.putString("email", mEmail.getText().toString());
                                                 editor.apply();
-                                                
-                                            }else{
+
+                                            } else {
 
                                                 Log.d("CHECKEMAIL", "User email address not updated: " + mEmail.getText().toString());
                                                 Toast.makeText(getContext(), "Error: E-Mail Not Changed", Toast.LENGTH_SHORT).show();
@@ -287,7 +300,7 @@ public class UserFragment extends Fragment {
                 mAuth.signOut();
                 try {
                     LoginManager.getInstance().logOut();
-                }catch(Exception e){
+                } catch (Exception e) {
 
                 }
                 editor = settings.edit();

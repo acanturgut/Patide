@@ -28,12 +28,12 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        emailField = (EditText)findViewById(R.id.forgot_password_field);
-        field = (TextView)findViewById(R.id.check_email_field);
+        emailField = (EditText) findViewById(R.id.forgot_password_field);
+        field = (TextView) findViewById(R.id.check_email_field);
 
         field.setText("-");
 
-        goBack = (Button)findViewById(R.id.go_back);
+        goBack = (Button) findViewById(R.id.go_back);
 
         goBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,12 +42,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 finish();
-
-
             }
         });
 
-        sendEmail = (Button)findViewById(R.id.forget_password);
+        sendEmail = (Button) findViewById(R.id.forget_password);
         sendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,7 +55,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                     String emailAddress = emailField.getText().toString();
 
-                    if(!emailAddress.isEmpty()) {
+                    if (!emailAddress.isEmpty()) {
 
 
                         auth.sendPasswordResetEmail(emailAddress)
@@ -83,7 +81,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                                         }
                                     }
                                 });
-
                     }
                 }
             }

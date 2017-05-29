@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-    private static final String TAG = "FACEBOOK_FIREBASE" ;
+    private static final String TAG = "FACEBOOK_FIREBASE";
 
     SharedPreferences settings;
     SharedPreferences.Editor editor;
@@ -137,12 +137,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Log.d(TAG, "facebook:onError", error);
 
 
-
             }
         });
 
         // [END initialize_fblogin]
-
 
 
         getSupportActionBar().hide();
@@ -249,11 +247,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                         //// TODO: 25/05/2017  GOOGLE LOG IN FIRST TIME HANDLED HERE
 
-                        Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), AskScreenForCallender.class);
                         startActivity(intent);
 
                     } else {
-                        Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), AskScreenForCallender.class);
                         startActivity(intent);
                     }
 
@@ -267,7 +265,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         };
     }
-
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -524,18 +521,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             if (registered) {
                                 signInSuccesfull();
-                                //Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
-                                //startActivity(intent);
-                                //finish();
 
                             } else {
                                 mPasswordView.setError(getString(R.string.error_incorrect_password));
-                                //mPasswordView.requestFocus();
-                            }
-                            // ...
-                            showProgress(false);
 
-                            // ...
+                            }
+
+                            showProgress(false);
                         }
                     });
 
@@ -628,17 +620,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                             }
 
-
-
                         } else {
-                            // If sign in fails, display a message to the user.
 
                             Toast.makeText(getApplicationContext(), "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
 
                         }
-
-                        // ...
                     }
                 });
     }

@@ -313,8 +313,6 @@ public class EventDetailFragment extends Fragment {
                     ChooseDateButton.setText(date + " " + hr + tPicker.getCurrentHour() + ":" + min + tPicker.getCurrentMinute());
 
                 }
-
-
             }
         });
 
