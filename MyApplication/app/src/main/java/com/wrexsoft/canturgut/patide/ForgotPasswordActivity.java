@@ -53,7 +53,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseAuth auth = FirebaseAuth.getInstance();
 
-                if (emailField.getText().toString() != null) {
+                if (emailField.getText().toString() != null || emailField.getText().equals("")) {
 
                     String emailAddress = emailField.getText().toString();
 
