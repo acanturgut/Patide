@@ -36,6 +36,7 @@ public class AskScreenForCallender extends AppCompatActivity {
             public void onClick(View v) {
 
                 edit.putBoolean("isImportCalendar", true);
+                edit.apply();
 
                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                 startActivity(intent);
@@ -48,6 +49,7 @@ public class AskScreenForCallender extends AppCompatActivity {
             public void onClick(View v) {
 
                 edit.putBoolean("isImportCalendar", false);
+                edit.apply();
 
                 Intent intent = new Intent(getApplicationContext(), MainMenuActivity.class);
                 startActivity(intent);
