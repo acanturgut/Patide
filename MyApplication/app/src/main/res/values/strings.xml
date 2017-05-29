@@ -50,6 +50,7 @@
 
     <string name="user_screen_user_info">User Information</string>
     <string name="user_screen_user_habits">User Habits</string>
+    <string name="user_screen_notifications">User Notifications</string>
 
     <!-- New Event Screen -->
 

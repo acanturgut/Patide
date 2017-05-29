@@ -117,9 +117,26 @@
                     android:ems="10"
                     android:hint="@string/eventscreen_comment"
                     android:inputType="textMultiLine"
-                    android:lines="3" />
+                    android:lines="2" />
 
             </android.support.design.widget.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/chooseNotification"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/button_white_color"
+                    android:text="Choose Notification Time"
+                    android:textColor="@color/patide_color" />
+            </LinearLayout>
+
+
 
         </LinearLayout>
 
