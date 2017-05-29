@@ -66,6 +66,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".AskScreenForCallender"></activity>
+
+
+        <receiver android:name=".back.AlarmReceiver">
+            <intent-filter>
+                <action android:name="CUSTOM_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
