@@ -184,6 +184,8 @@ public class UserFragment extends Fragment {
                     }
 
 
+
+
                     editable = false;
                     mPassword.setVisibility(View.GONE);
                     mEmail.setKeyListener(null);
@@ -205,6 +207,13 @@ public class UserFragment extends Fragment {
                     editor.putString("leisure", leisure);
                     editor.putString("work", work);
                     editor.putString("study", study);
+
+                    if(cllanderSwitch.isChecked()){
+                        editor.putBoolean("isImportCalendar",true);
+                    }else{
+                        editor.putBoolean("isImportCalendar",false);
+                    }
+
                     editor.apply();
                 }
             }

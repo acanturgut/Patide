@@ -158,7 +158,6 @@ public class AllEventsFragment extends Fragment {
         return view;
     }
 
-
     List<me.everything.providers.android.calendar.Calendar> calenrdars;
 
     @Override
@@ -166,10 +165,17 @@ public class AllEventsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        boolean isEventCal = false;
 
         try {
 
-            Utility.readCalendarEvent(getContext());
+            if(settings.getBoolean("isImportCalendar",isEventCal)){
+
+                Utility.readCalendarEvent(getContext());
+
+            }else{
+
+            }
 
         } catch (Exception e) {
 
