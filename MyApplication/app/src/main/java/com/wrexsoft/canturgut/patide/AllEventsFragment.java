@@ -83,7 +83,7 @@ public class AllEventsFragment extends Fragment {
         listOfEvents.clear();
         avi = (AVLoadingIndicatorView) view.findViewById(R.id.avi);
 
-        greenDrawable = getResources().getDrawable(R.drawable.green,getActivity().getTheme());
+        greenDrawable = getResources().getDrawable(R.drawable.green, getActivity().getTheme());
 
         settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         fbuserId = settings.getString("FbUserId", "userId");
@@ -160,13 +160,20 @@ public class AllEventsFragment extends Fragment {
 
 
     List<me.everything.providers.android.calendar.Calendar> calenrdars;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Utility.readCalendarEvent(getContext());
 
 
+        try {
+
+            Utility.readCalendarEvent(getContext());
+
+        } catch (Exception e) {
+
+        }
     }
 
 
@@ -180,15 +187,15 @@ public class AllEventsFragment extends Fragment {
             holder.put("Content", ApplicationCalculations.getListOfEventNames()[i]);
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
 
-            if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 0 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 1) {
+            if (Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 0 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 1) {
 
                 holder.put("Image", Integer.toString(R.drawable.green));
 
-            }else if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 2 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 3) {
+            } else if (Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 2 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 3) {
 
                 holder.put("Image", Integer.toString(R.drawable.yellow));
 
-            }else{
+            } else {
 
                 holder.put("Image", Integer.toString(R.drawable.red));
 
@@ -207,7 +214,7 @@ public class AllEventsFragment extends Fragment {
         adapterListEvents = new SimpleAdapter(getActivity(),
                 listOfEvents,
                 R.layout.list_view,
-                new String[]{"Content", "Time","Image"},
+                new String[]{"Content", "Time", "Image"},
                 new int[]{R.id.content, R.id.time, R.id.image_prio});
 
         listViewEvents.setAdapter(adapterListEvents);
@@ -373,15 +380,15 @@ public class AllEventsFragment extends Fragment {
             holder.put("Content", ApplicationCalculations.getListOfEventNames()[i]);
             holder.put("Time", ApplicationCalculations.getListOfEventTimeLeft()[i]);
 
-            if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 0 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 1) {
+            if (Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 0 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 1) {
 
                 holder.put("Image", Integer.toString(R.drawable.green));
 
-            }else if(Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 2 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 3) {
+            } else if (Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 2 || Integer.parseInt(ApplicationCalculations.getListOfEventPriority()[i]) == 3) {
 
                 holder.put("Image", Integer.toString(R.drawable.yellow));
 
-            }else{
+            } else {
 
                 holder.put("Image", Integer.toString(R.drawable.red));
 

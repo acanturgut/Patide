@@ -53,33 +53,38 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 FirebaseAuth auth = FirebaseAuth.getInstance();
 
-                if (emailField.getText().toString() != null || emailField.getText().equals("")) {
+                if (emailField.getText() != null || emailField.getText().toString().equals("")) {
 
                     String emailAddress = emailField.getText().toString();
 
-                    auth.sendPasswordResetEmail(emailAddress)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        field.setText(R.string.check_your_email_text);
-
-                                        final Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        }, 2000);
+                    if(!emailAddress.isEmpty()) {
 
 
-                                    }else{
-                                        field.setText("Error with e-mail");
+                        auth.sendPasswordResetEmail(emailAddress)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            field.setText(R.string.check_your_email_text);
+
+                                            final Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
+                                            }, 2000);
+
+
+                                        } else {
+                                            field.setText("Error with e-mail");
+                                        }
                                     }
-                                }
-                            });
+                                });
+
+                    }
                 }
             }
         });
