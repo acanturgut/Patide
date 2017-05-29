@@ -20,7 +20,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
     Button sendEmail;
     EditText emailField;
     TextView field;
-
     Button goBack;
 
     @Override

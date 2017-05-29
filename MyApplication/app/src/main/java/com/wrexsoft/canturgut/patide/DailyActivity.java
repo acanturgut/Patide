@@ -19,13 +19,10 @@ public class DailyActivity extends AppCompatActivity {
     EditText mWork;
     EditText mStudy;
     Button mStart;
-
     FirebaseUser user;
     String fbuserId;
-
     SharedPreferences settings;
     SharedPreferences.Editor editor;
-
     DatabaseReference dref;
 
     @Override

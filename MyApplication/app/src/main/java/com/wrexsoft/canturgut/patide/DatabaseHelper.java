@@ -34,7 +34,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT UNIQUE, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT UNIQUE, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)");
         db.execSQL("CREATE TABLE " + TABLE_NAME3 + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE, METHOD TEXT)");
     }
 
@@ -45,20 +45,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData (String id, String comments, String date, String estimatedtime, String eventname, String priority){
+    public boolean insertData(String id, String comments, String date, String estimatedtime, String eventname, String priority) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2,id);
-        contentValues.put(COL_3,comments);
-        contentValues.put(COL_4,date);
-        contentValues.put(COL_5,estimatedtime);
-        contentValues.put(COL_6,eventname);
-        contentValues.put(COL_7,priority);
+        contentValues.put(COL_2, id);
+        contentValues.put(COL_3, comments);
+        contentValues.put(COL_4, date);
+        contentValues.put(COL_5, estimatedtime);
+        contentValues.put(COL_6, eventname);
+        contentValues.put(COL_7, priority);
 
-        long result = db.insert(TABLE_NAME,null,contentValues);
-        if(result == -1){
+        long result = db.insert(TABLE_NAME, null, contentValues);
+        if (result == -1) {
             return false;
-        }else{
+        } else {
             Log.d("databaseInsert", COL_2 + ": " + id);
             Log.d("databaseInsert", COL_3 + ": " + comments);
             Log.d("databaseInsert", COL_4 + ": " + date);
@@ -70,22 +70,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getSQLiteData(){
+    public Cursor getSQLiteData() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = db.rawQuery("select * from " + TABLE_NAME ,null);
+        Cursor result = db.rawQuery("select * from " + TABLE_NAME, null);
         return result;
     }
 
-    public boolean updateData(String id, String comments, String date, String estimatedtime, String eventname, String priority){
+    public boolean updateData(String id, String comments, String date, String estimatedtime, String eventname, String priority) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2,id);
-        contentValues.put(COL_3,comments);
-        contentValues.put(COL_4,date);
-        contentValues.put(COL_5,estimatedtime);
-        contentValues.put(COL_6,eventname);
-        contentValues.put(COL_7,priority);
-        db.update(TABLE_NAME, contentValues, "ID = ?",new String[] {id});
+        contentValues.put(COL_2, id);
+        contentValues.put(COL_3, comments);
+        contentValues.put(COL_4, date);
+        contentValues.put(COL_5, estimatedtime);
+        contentValues.put(COL_6, eventname);
+        contentValues.put(COL_7, priority);
+        db.update(TABLE_NAME, contentValues, "ID = ?", new String[]{id});
         return true;
     }
 
@@ -97,20 +97,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public boolean insertToKuyruk (String id, String type){
+    public boolean insertToKuyruk(String id, String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL2_2,id);
-        contentValues.put(COL2_3,type);
-        long result = db.insert(TABLE_NAME3, null,contentValues);
+        contentValues.put(COL2_2, id);
+        contentValues.put(COL2_3, type);
+        long result = db.insert(TABLE_NAME3, null, contentValues);
         Log.d("databaseInsert", "-----------------------");
         Log.d("databaseInsert", " TRY  ");
         Log.d("databaseInsert", COL2_2 + ": " + id);
         Log.d("databaseInsert", "-----------------------");
 
-        if(result == -1){
+        if (result == -1) {
             return false;
-        }else{
+        } else {
             Log.d("databaseInsert", "-----------------------");
             Log.d("databaseInsert", " Following is added to database");
             Log.d("databaseInsert", COL2_2 + ": " + id);
@@ -119,9 +119,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    public Cursor getKuyrukData(){
+    public Cursor getKuyrukData() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor result = db.rawQuery("select * from " + TABLE_NAME3 ,null);
+        Cursor result = db.rawQuery("select * from " + TABLE_NAME3, null);
         return result;
     }
 
@@ -132,11 +132,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         database.close();
     }
 
-    public void dropAllTables(){
+    public void dropAllTables() {
         SQLiteDatabase database = this.getWritableDatabase();
-        database.execSQL("DROP TABLE IF EXISTS "+ TABLE_NAME);
-        database.execSQL("DROP TABLE IF EXISTS "+ TABLE_NAME3);
-        database.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)" );
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME3);
+        database.execSQL("CREATE TABLE " + TABLE_NAME + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE,COMMENTS TEXT,DATE TEXT, ESTIMATEDTIME TEXT, EVENTNAME TEXT, PRIORITY TEXT)");
         database.execSQL("CREATE TABLE " + TABLE_NAME3 + " (TABLEID INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT UNIQUE)");
 
         database.close();

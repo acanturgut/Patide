@@ -426,7 +426,6 @@ public class SignUpActivity extends AppCompatActivity implements LoaderCallbacks
             return true;
         }
 
-
         private void localSignIn() {
             SharedPreferences.Editor editor = settings.edit();
             String userID = user.getUid();

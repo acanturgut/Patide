@@ -16,11 +16,10 @@
         app:indicatorName="BallClipRotateMultipleIndicator" />
 
     <LinearLayout
-        android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:orientation="vertical">
 
 
         <LinearLayout
@@ -62,11 +61,11 @@
         </LinearLayout>
 
         <View
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-
             android:layout_width="match_parent"
             android:layout_height="3dp"
+
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
 
             android:background="@color/patide_color" />
 
@@ -76,7 +75,7 @@
             android:layout_height="fill_parent"
             android:layout_marginTop="1dip"
             android:divider="@color/patide_color"
-            android:dividerHeight="1dp"/>
+            android:dividerHeight="1dp" />
 
     </LinearLayout>
 

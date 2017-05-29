@@ -27,14 +27,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp">
 
-                <EditText
-                    android:id="@+id/mEventName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:textStyle="bold"
-                    android:inputType="textPersonName"
-                    android:hint="@string/eventscreen_name" />
+                    <EditText
+                        android:id="@+id/mEventName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:hint="@string/eventscreen_name"
+                        android:inputType="textPersonName"
+                        android:textStyle="bold" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -79,9 +79,9 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -109,15 +109,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
-            <EditText
-                android:id="@+id/mComments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/eventscreen_comment"
-                android:inputType="textMultiLine"
-                android:lines="2"/>
+                <EditText
+                    android:id="@+id/mComments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="@string/eventscreen_comment"
+                    android:inputType="textMultiLine"
+                    android:lines="2" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -135,8 +134,6 @@
                     android:text="Choose Notification Time"
                     android:textColor="@color/patide_color" />
             </LinearLayout>
-
-
 
         </LinearLayout>
 

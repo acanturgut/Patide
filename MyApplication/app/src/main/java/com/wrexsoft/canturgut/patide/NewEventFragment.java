@@ -355,7 +355,7 @@ public class NewEventFragment extends Fragment {
             eventDetails.put("date", dateString);
             eventDetails.put("priority", priorityString);
 
-            if (notificationDate != Calendar.getInstance()){
+            if (notificationDate != Calendar.getInstance()) {
                 setNotification();
             }
             if (checkConnection(getActivity().getApplicationContext())) {
@@ -380,12 +380,12 @@ public class NewEventFragment extends Fragment {
         //cal.add(Calendar.SECOND, 10);
 
         Intent intent = new Intent("CUSTOM_NOTIFICATION");
-        PendingIntent broadcast = PendingIntent.getBroadcast(getContext(),100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationDate.getTimeInMillis(),broadcast);
+        PendingIntent broadcast = PendingIntent.getBroadcast(getContext(), 100, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, notificationDate.getTimeInMillis(), broadcast);
 
         Log.e("Current Time:", Long.toString(notificationDate.getTimeInMillis()));
 
-        Toast.makeText(getContext(),"Your notification has been set.",Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Your notification has been set.", Toast.LENGTH_SHORT).show();
 
     }
 

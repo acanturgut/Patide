@@ -63,7 +63,7 @@ public class Utility extends Fragment {
                 int hourDif = mycalendar.get(Calendar.HOUR);
                 HashMap<String, Object> eventDetails = new HashMap<>();
                 eventDetails.put("eventname", cursor.getString(1));
-                eventDetails.put("estimatedtime", hourDif-3);
+                eventDetails.put("estimatedtime", hourDif - 3);
                 eventDetails.put("comments", cursor.getString(2) + " ");
                 eventDetails.put("date", convertToDate(cursor.getString(3)));
 

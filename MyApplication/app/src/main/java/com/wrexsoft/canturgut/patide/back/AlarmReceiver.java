@@ -28,11 +28,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         stackBuilder.addParentStack(MainMenuActivity.class);
         stackBuilder.addNextIntent(notificationIntent);
 
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(100,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(100, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
-        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         Notification notification = builder.setContentTitle("Event Approaching!")
                 .setContentText("You have an event that's due soon.")

@@ -73,9 +73,7 @@ public class AllEventsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_all_events, container, false);
 
@@ -169,11 +167,11 @@ public class AllEventsFragment extends Fragment {
 
         try {
 
-            if(settings.getBoolean("isImportCalendar",isEventCal)){
+            if (settings.getBoolean("isImportCalendar", isEventCal)) {
 
                 Utility.readCalendarEvent(getContext());
 
-            }else{
+            } else {
 
             }
 

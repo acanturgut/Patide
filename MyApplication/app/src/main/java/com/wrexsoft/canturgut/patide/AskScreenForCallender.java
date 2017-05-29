@@ -28,8 +28,8 @@ public class AskScreenForCallender extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        yes = (Button)findViewById(R.id.yes);
-        no = (Button)findViewById(R.id.no);
+        yes = (Button) findViewById(R.id.yes);
+        no = (Button) findViewById(R.id.no);
 
         yes.setOnClickListener(new View.OnClickListener() {
             @Override

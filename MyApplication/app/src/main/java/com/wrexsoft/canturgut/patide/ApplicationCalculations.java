@@ -60,9 +60,9 @@ public class ApplicationCalculations {
         String study = settings.getString("study", "0");
 
         Date currentTime = new Date();
-        for (int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             int otherEvents = 0;
-            for(int k = 0; k < i ; k++){
+            for (int k = 0; k < i; k++) {
                 otherEvents = otherEvents + Integer.parseInt(listOfEventEstimatedTimes[k]);
             }
             Log.d("calculations", "--------------------------------");
@@ -72,32 +72,49 @@ public class ApplicationCalculations {
             long diff = listOfEventDate[i].getTime() - currentTime.getTime();
             long diffDays = diff / (6 * 60 * 60 * 1000);
             Log.d("calculations", "Day difference" + diffDays);
-            Log.d("calculations", "Calculate: " + otherEvents + " + " + diffDays +"*" + (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)) + "/4");
-            otherEvents = otherEvents + (int)diffDays * ((Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)) / 4);
+            Log.d("calculations", "Calculate: " + otherEvents + " + " + diffDays + "*" + (Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)) + "/4");
+            otherEvents = otherEvents + (int) diffDays * ((Integer.parseInt(leisure) + Integer.parseInt(work) + Integer.parseInt(study)) / 4);
             Log.d("calculations", "Result is " + otherEvents);
             diff = listOfEventDate[i].getTime() - currentTime.getTime();
-            diff = diff - (otherEvents*60*60*1000);
+            diff = diff - (otherEvents * 60 * 60 * 1000);
             long diffMinutes = diff / (60 * 1000) % 60;
             long diffHours = diff / (60 * 60 * 1000) % 24;
             diffDays = diff / (24 * 60 * 60 * 1000);
-            String showString="";
+            String showString = "";
             int controller = 0;
-            if(diffDays > 0){
-                if (controller == 1){showString = showString +", ";};
+            if (diffDays > 0) {
+                if (controller == 1) {
+                    showString = showString + ", ";
+                }
+                ;
                 controller = 1;
                 showString = showString + diffDays + " days";
-            }else{controller = 0;}
-            if(diffHours > 0){
-                if (controller == 1){showString = showString +", ";};
+            } else {
+                controller = 0;
+            }
+            if (diffHours > 0) {
+                if (controller == 1) {
+                    showString = showString + ", ";
+                }
+                ;
                 controller = 1;
                 showString = showString + diffHours + " hours";
-            }{controller = 0;}
-            if(diffMinutes > 0 && diffDays < 20){
-                if (controller == 1){showString = showString +", ";};
+            }
+            {
+                controller = 0;
+            }
+            if (diffMinutes > 0 && diffDays < 20) {
+                if (controller == 1) {
+                    showString = showString + ", ";
+                }
+                ;
                 controller = 1;
-                showString = showString + ", " +diffMinutes + " minutes";
-            }{controller = 0;}
-            if (showString.equals("")){
+                showString = showString + ", " + diffMinutes + " minutes";
+            }
+            {
+                controller = 0;
+            }
+            if (showString.equals("")) {
                 showString = showString + "This Event is Passed";
             }
             listOfEventTimeLeft[i] = showString;
@@ -136,7 +153,7 @@ public class ApplicationCalculations {
         }
     }
 
-    private static void replaceitems(int j){
+    private static void replaceitems(int j) {
         String tempID;
         String tempName;
         String tempEst;
@@ -160,12 +177,12 @@ public class ApplicationCalculations {
         listOfEventDate[j + 1] = tempDate;
 
         tempPri = listOfEventPriority[j];
-        listOfEventPriority[j] = listOfEventPriority[j+1];
-        listOfEventPriority[j+1] = tempPri;
+        listOfEventPriority[j] = listOfEventPriority[j + 1];
+        listOfEventPriority[j + 1] = tempPri;
 
         tempTimeLeft = listOfEventTimeLeft[j];
-        listOfEventTimeLeft[j] = listOfEventTimeLeft[j+1];
-        listOfEventTimeLeft[j+1] = tempTimeLeft;
+        listOfEventTimeLeft[j] = listOfEventTimeLeft[j + 1];
+        listOfEventTimeLeft[j + 1] = tempTimeLeft;
     }
 
     public static Date getTime(String date) {
@@ -177,7 +194,7 @@ public class ApplicationCalculations {
         Date mydate = new Date();
 
         mydate.setYear(Integer.parseInt(dateValues[2]) - 1900);
-        mydate.setMonth(Integer.parseInt(dateValues[1]) -  1);
+        mydate.setMonth(Integer.parseInt(dateValues[1]) - 1);
         mydate.setDate(Integer.parseInt(dateValues[0]));
         mydate.setHours(Integer.parseInt(timeValues[0]));
         mydate.setMinutes(Integer.parseInt(timeValues[1]));
